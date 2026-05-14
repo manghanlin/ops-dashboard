@@ -715,6 +715,13 @@
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 8V2M5 2L2.5 4.5M5 2L7.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <span id="orderCountChgTxt">+11.8%</span>
           </span>
+          <span style="color:var(--text-tertiary);font-size:14px;padding:0 2px">|</span>
+          <span class="mkpi-sec-label">總金額</span>
+          <span class="mkpi-sec-value" id="orderTotalVal">—</span>
+          <span class="badge up" id="orderTotalBadge">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 8V2M5 2L2.5 4.5M5 2L7.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="orderTotalChgTxt">+11.2%</span>
+          </span>
         </div>
       </div>
       <svg class="mkpi-chart" id="orderSpark" viewBox="0 0 190 68" preserveAspectRatio="none" aria-hidden="true"></svg>
@@ -736,7 +743,8 @@ const DATA = {
     pvuu:  { value:8.1, chg:'+3.8%', chgUp:true,  spark:[7.0,7.2,7.4,7.5,7.6,7.8,7.9,7.9,8.0,8.1,8.0,8.1] },
     login: { value:63.4, chg:'+1.6%', chgUp:true, spark:[59,60,61,62,62.2,62.8,63,63.2,63.3,63.4,63.3,63.4] },
     order:      { value:3.6, chg:'-2.1%', chgUp:false, spark:[4.4,4.2,4.0,4.1,3.9,3.8,3.7,3.8,3.6,3.7,3.5,3.6] },
-    orderCount: { value:'1,248', chg:'+12.4%', chgUp:true },
+    orderCount: { value:'1,248',    chg:'+12.4%', chgUp:true },
+    orderTotal: { value:'NT$2.1M',  chg:'+11.2%', chgUp:true },
     traffic:[
       { name:'總訪客', value:'42.8K', unit:'', chg:'+4.2% 前期比', up:true,  spark:[35,37,38,38.5,39,40,41,41.5,42,42.5,42.7,42.8] },
       { name:'總訪次', value:'218K',  unit:'', chg:'+3.9% 前期比', up:true,  spark:[185,192,198,202,207,210,213,215,216,217,218,218] },
@@ -772,16 +780,18 @@ const DATA = {
       { name:'訪客→會員轉換率', value:'4.1',  unit:'%',chg:'+0.4%', up:true,  spark:[3.4,3.5,3.7,3.8,3.9,4.0,4.0,4.1,4.1,4.1,4.0,4.1] },
     ],
     subFunnel:[
-      { name:'新增訂單數',     value:'892',  chg:'+12.4%',up:true  },
-      { name:'新訂數',         value:'810',  chg:'+7.4%', up:true  },
+      { name:'新增訂單數',     value:'892',       chg:'+12.4%',up:true  },
+      { name:'總金額',         value:'NT$1.48M',  chg:'+12.1%',up:true  },
+      { name:'新訂數',         value:'810',       chg:'+7.4%', up:true  },
       { name:'新訂次月續訂率', value:'71.8%',chg:'+0.9%', up:true  },
       { name:'整體續訂率',     value:'83.7%',chg:'+0.4%', up:true  },
       { name:'付費牆轉換率',   value:'6.5%', chg:'+0.1%', up:true  },
     ],
     subFoot:{ LTV:'NT$1,821', MRR:'NT$2.0M', 'LTV:CAC':'3.7×' },
     purFunnel:[
-      { name:'新增訂單數',   value:'356',  chg:'+10.2%',up:true  },
-      { name:'加入購物車率', value:'17.9%',chg:'+0.8%', up:true  },
+      { name:'新增訂單數',   value:'356',      chg:'+10.2%',up:true  },
+      { name:'總金額',       value:'NT$622K',  chg:'+9.8%', up:true  },
+      { name:'加入購物車率', value:'17.9%',    chg:'+0.8%', up:true  },
       { name:'購物車轉換率', value:'41.9%',chg:'-2.5%', up:false },
       { name:'回購率',       value:'27.8%',chg:'+0.2%', up:true  },
     ],
@@ -793,7 +803,8 @@ const DATA = {
     pvuu:  { value:8.4, chg:'+5.2%', chgUp:true,  spark:[6.8,7.1,7.3,7.8,7.5,7.9,8.1,8.0,8.3,8.4,8.2,8.4] },
     login: { value:64.2, chg:'+2.1%', chgUp:true, spark:[58,60,61,62,61,63,63.5,64,64.1,63.8,64.2,64.2] },
     order:      { value:3.8, chg:'-1.4%', chgUp:false, spark:[4.5,4.3,4.1,4.2,3.9,4.0,3.8,3.9,3.7,3.8,3.6,3.8] },
-    orderCount: { value:'6,074', chg:'+11.8%', chgUp:true },
+    orderCount: { value:'6,074',    chg:'+11.8%', chgUp:true },
+    orderTotal: { value:'NT$12.4M', chg:'+11.2%', chgUp:true },
     traffic:[
       { name:'總訪客', value:'248K',   unit:'', chg:'+6.1% 前期比', up:true, spark:[180,195,210,205,225,230,238,242,245,248,247,248] },
       { name:'總訪次', value:'1.28M',  unit:'', chg:'+4.8% 前期比', up:true, spark:[950,1020,1050,1080,1100,1120,1150,1190,1220,1250,1275,1280] },
@@ -829,16 +840,18 @@ const DATA = {
       { name:'訪客→會員轉換率', value:'4.2',   unit:'%',chg:'+0.6%',up:true,spark:[3.2,3.4,3.6,3.7,3.8,3.9,4.0,4.1,4.15,4.2,4.18,4.2] },
     ],
     subFunnel:[
-      { name:'新增訂單數',     value:'4,386', chg:'+11.8%',up:true },
-      { name:'新訂數',         value:'4,826', chg:'+9.2%', up:true },
+      { name:'新增訂單數',     value:'4,386',    chg:'+11.8%',up:true },
+      { name:'總金額',         value:'NT$8.7M',  chg:'+12.8%',up:true },
+      { name:'新訂數',         value:'4,826',    chg:'+9.2%', up:true },
       { name:'新訂次月續訂率', value:'72.5%', chg:'+1.5%', up:true },
       { name:'整體續訂率',     value:'84.2%', chg:'+0.8%', up:true },
       { name:'付費牆轉換率',   value:'6.8%',  chg:'+0.3%', up:true },
     ],
     subFoot:{ LTV:'NT$1,856', MRR:'NT$2.1M', 'LTV:CAC':'3.8×' },
     purFunnel:[
-      { name:'新增訂單數',   value:'1,688', chg:'+10.8%',up:true  },
-      { name:'加入購物車率', value:'18.3%', chg:'+1.2%', up:true  },
+      { name:'新增訂單數',   value:'1,688',    chg:'+10.8%',up:true  },
+      { name:'總金額',       value:'NT$3.7M',  chg:'+10.4%',up:true  },
+      { name:'加入購物車率', value:'18.3%',    chg:'+1.2%', up:true  },
       { name:'購物車轉換率', value:'42.7%', chg:'-2.1%', up:false },
       { name:'回購率',       value:'28.4%', chg:'+0.5%', up:true  },
     ],
@@ -850,7 +863,8 @@ const DATA = {
     pvuu:  { value:8.9, chg:'+11.2%', chgUp:true,  spark:[6.2,6.5,6.8,7.1,7.4,7.6,7.9,8.1,8.4,8.6,8.8,8.9] },
     login: { value:65.8, chg:'+4.4%', chgUp:true, spark:[57,58.5,60,61,62,63,63.5,64,64.8,65.2,65.5,65.8] },
     order:      { value:4.1, chg:'+2.5%', chgUp:true, spark:[3.5,3.6,3.7,3.8,3.9,4.0,4.0,4.1,4.1,4.2,4.1,4.1] },
-    orderCount: { value:'24,628', chg:'+16.2%', chgUp:true },
+    orderCount: { value:'24,628',   chg:'+16.2%', chgUp:true },
+    orderTotal: { value:'NT$49.5M', chg:'+15.8%', chgUp:true },
     traffic:[
       { name:'總訪客', value:'940K',  unit:'', chg:'+11.2% 前期比', up:true, spark:[740,775,800,820,840,860,880,900,915,928,936,940] },
       { name:'總訪次', value:'5.06M', unit:'', chg:'+9.8% 前期比',  up:true, spark:[3.9,4.1,4.3,4.4,4.5,4.6,4.7,4.8,4.9,5.0,5.05,5.06] },
@@ -886,16 +900,18 @@ const DATA = {
       { name:'訪客→會員轉換率', value:'4.5',   unit:'%',chg:'+1.2%', up:true,spark:[3.0,3.2,3.5,3.7,3.9,4.0,4.1,4.2,4.3,4.4,4.45,4.5] },
     ],
     subFunnel:[
-      { name:'新增訂單數',     value:'18,276', chg:'+16.2%',up:true },
-      { name:'新訂數',         value:'19,852', chg:'+18.4%',up:true },
+      { name:'新增訂單數',     value:'18,276',   chg:'+16.2%',up:true },
+      { name:'總金額',         value:'NT$34.2M', chg:'+17.2%',up:true },
+      { name:'新訂數',         value:'19,852',   chg:'+18.4%',up:true },
       { name:'新訂次月續訂率', value:'74.1%',  chg:'+3.1%', up:true },
       { name:'整體續訂率',     value:'85.6%',  chg:'+2.2%', up:true },
       { name:'付費牆轉換率',   value:'7.4%',   chg:'+1.2%', up:true },
     ],
     subFoot:{ LTV:'NT$1,940', MRR:'NT$2.4M', 'LTV:CAC':'4.1×' },
     purFunnel:[
-      { name:'新增訂單數',   value:'6,352', chg:'+14.8%',up:true },
-      { name:'加入購物車率', value:'20.1%', chg:'+3.0%', up:true },
+      { name:'新增訂單數',   value:'6,352',    chg:'+14.8%',up:true },
+      { name:'總金額',       value:'NT$15.3M', chg:'+13.2%',up:true },
+      { name:'加入購物車率', value:'20.1%',    chg:'+3.0%', up:true },
       { name:'購物車轉換率', value:'45.2%', chg:'+0.4%', up:true },
       { name:'回購率',       value:'31.6%', chg:'+3.7%', up:true },
     ],
@@ -1138,6 +1154,9 @@ function render() {
   document.getElementById('orderCountVal').textContent = d.orderCount.value;
   document.getElementById('orderCountChgTxt').textContent = d.orderCount.chg;
   document.getElementById('orderCountBadge').className = `badge ${d.orderCount.chgUp ? 'up' : 'down'}`;
+  document.getElementById('orderTotalVal').textContent = d.orderTotal.value;
+  document.getElementById('orderTotalChgTxt').textContent = d.orderTotal.chg;
+  document.getElementById('orderTotalBadge').className = `badge ${d.orderTotal.chgUp ? 'up' : 'down'}`;
   spark(document.getElementById('orderSpark'), d.order.spark, '#f97316', 190, 68);
 
   document.getElementById('funnelGrid').innerHTML =
