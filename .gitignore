@@ -1,0 +1,8 @@
+# 只追蹤儀表板專案，排除其他文件
+*
+
+# 白名單：明確允許的檔案
+!.gitignore
+!dashboard.html
+!media_kpi_full_framework.svg
+!README.md

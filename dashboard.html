@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>營運數據儀表板</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:        #080d1a;
+      --bg-card:        #0e1525;
+      --bg-card-hover:  #131e35;
+      --bg-sub:         #0b1220;
+      --border:         rgba(255,255,255,0.07);
+      --border-hover:   rgba(255,255,255,0.15);
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-tertiary:  #475569;
+
+      /* Platform — Green */
+      --p-color:  #10b981;
+      --p-bg:     rgba(16,185,129,0.08);
+      --p-border: rgba(16,185,129,0.22);
+
+      /* Identity — Blue */
+      --i-color:  #3b82f6;
+      --i-bg:     rgba(59,130,246,0.08);
+      --i-border: rgba(59,130,246,0.22);
+
+      /* Ad axis — Warm stone */
+      --a-color:  #a8a29e;
+      --a-border: rgba(168,162,158,0.22);
+
+      /* Conversion — Orange */
+      --c-color:  #f97316;
+      --c-bg:     rgba(249,115,22,0.08);
+      --c-border: rgba(249,115,22,0.22);
+
+      /* Purchase funnel — Rose */
+      --r-color:  #f43f5e;
+      --r-bg:     rgba(244,63,94,0.08);
+      --r-border: rgba(244,63,94,0.22);
+
+      /* ARPU — Purple/Indigo */
+      --arpu-a:   #a855f7;
+      --arpu-b:   #6366f1;
+
+      --up:      #10b981;
+      --down:    #ef4444;
+      --neutral: #64748b;
+
+      --rad-s:  8px;
+      --rad-m: 12px;
+      --rad-l: 16px;
+      --rad-xl:20px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+                   "PingFang TC", sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,13,26,0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      height: 56px;
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 15px; font-weight: 600;
+    }
+    .brand-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--arpu-a);
+      box-shadow: 0 0 10px var(--arpu-a);
+      animation: blink 2.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .header-right { display: flex; align-items: center; gap: 14px; }
+    .time-filter {
+      display: flex;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-s);
+      overflow: hidden;
+    }
+    .time-btn {
+      padding: 5px 14px;
+      font-size: 12px; font-weight: 500;
+      color: var(--text-secondary);
+      background: transparent; border: none; cursor: pointer;
+      transition: background .18s, color .18s;
+      white-space: nowrap;
+    }
+    .time-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+    .time-btn.active { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+    .ts { font-size: 11px; color: var(--text-tertiary); }
+
+    /* ══════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════ */
+    .main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 24px 64px;
+    }
+
+    /* ══════════════════════════════════════
+       ARPU HERO
+    ══════════════════════════════════════ */
+    .hero {
+      background: linear-gradient(140deg,#1c0a38 0%,#0d1538 45%,#080f22 100%);
+      border: 1px solid rgba(168,85,247,0.18);
+      border-radius: var(--rad-xl);
+      padding: 32px 40px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 40px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content:'';
+      position:absolute; top:-100px; right:-60px;
+      width:320px; height:320px;
+      background: radial-gradient(circle,rgba(168,85,247,.18),transparent 68%);
+      pointer-events:none;
+    }
+    .hero::after {
+      content:'';
+      position:absolute; bottom:-70px; left:220px;
+      width:240px; height:240px;
+      background: radial-gradient(circle,rgba(99,102,241,.12),transparent 68%);
+      pointer-events:none;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: .11em;
+      text-transform: uppercase; color: var(--arpu-a); margin-bottom: 5px;
+    }
+    .hero-title {
+      font-size: 15px; font-weight: 500; color: var(--text-secondary);
+      margin-bottom: 18px;
+    }
+    .hero-value-row {
+      display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .hero-value {
+      font-size: 58px; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1; letter-spacing: -2.5px;
+      color: var(--text-primary);
+    }
+    .hero-unit { font-size: 26px; font-weight: 500; color: var(--text-secondary); }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 999px;
+      font-size: 13px; font-weight: 700;
+      background: rgba(16,185,129,.12);
+      border: 1px solid rgba(16,185,129,.25);
+      color: var(--up);
+    }
+    .hero-meta {
+      display: flex; gap: 28px; flex-wrap: wrap;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .meta-label {
+      font-size: 10px; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--text-tertiary);
+    }
+    .meta-value {
+      font-size: 14px; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .hero-formula {
+      margin-top: 14px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      font-size: 11px; color: var(--text-tertiary);
+    }
+    .formula-chip {
+      display: inline-flex; align-items: center;
+      background: rgba(168,85,247,.1);
+      border: 1px solid rgba(168,85,247,.2);
+      border-radius: 4px; padding: 2px 8px;
+      font-family: 'SF Mono','Fira Code',monospace;
+      font-size: 11px; color: var(--arpu-a);
+    }
+    .hero-chart {
+      width: 100%; height: 90px;
+    }
+
+    /* ══════════════════════════════════════
+       LAYER TABS
+    ══════════════════════════════════════ */
+    .layer-nav {
+      display: flex; gap: 4px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-m);
+      padding: 4px;
+      margin-bottom: 22px;
+    }
+    .layer-tab {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 10px 16px;
+      border-radius: 8px; border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: all .22s ease;
+    }
+    .layer-tab:hover { color: var(--text-primary); background: rgba(255,255,255,.04); }
+    .tab-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+      transition: box-shadow .22s;
+    }
+    .layer-tab[data-l="platform"] .tab-dot { background: var(--p-color); }
+    .layer-tab[data-l="identity"] .tab-dot { background: var(--i-color); }
+    .layer-tab[data-l="conversion"] .tab-dot { background: var(--c-color); }
+
+    .layer-tab[data-l="platform"].active {
+      background: var(--p-bg); color: var(--p-color);
+      border-color: var(--p-border); font-weight: 600;
+    }
+    .layer-tab[data-l="platform"].active .tab-dot { box-shadow: 0 0 8px var(--p-color); }
+
+    .layer-tab[data-l="identity"].active {
+      background: var(--i-bg); color: var(--i-color);
+      border-color: var(--i-border); font-weight: 600;
+    }
+    .layer-tab[data-l="identity"].active .tab-dot { box-shadow: 0 0 8px var(--i-color); }
+
+    .layer-tab[data-l="conversion"].active {
+      background: var(--c-bg); color: var(--c-color);
+      border-color: var(--c-border); font-weight: 600;
+    }
+    .layer-tab[data-l="conversion"].active .tab-dot { box-shadow: 0 0 8px var(--c-color); }
+
+    .tab-sub { font-size: 11px; opacity: .65; font-weight: 400; }
+
+    /* ══════════════════════════════════════
+       LAYER PANELS
+    ══════════════════════════════════════ */
+    .layer-panel { display: none; animation: fadeUp .28s ease; }
+    .layer-panel.active { display: block; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Main KPI Banner */
+    .main-kpi {
+      border-radius: var(--rad-l);
+      padding: 26px 32px;
+      margin-bottom: 18px;
+      display: grid;
+      grid-template-columns: 1fr 190px;
+      gap: 32px; align-items: center;
+      position: relative; overflow: hidden;
+    }
+    .main-kpi.p { background: linear-gradient(135deg,rgba(16,185,129,.1),rgba(5,150,105,.03)); border: 1px solid var(--p-border); }
+    .main-kpi.i { background: linear-gradient(135deg,rgba(59,130,246,.1),rgba(29,78,216,.03)); border: 1px solid var(--i-border); }
+    .main-kpi.c { background: linear-gradient(135deg,rgba(249,115,22,.1),rgba(220,38,38,.03)); border: 1px solid var(--c-border); }
+
+    .mkpi-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 3px; }
+    .p .mkpi-eyebrow { color: var(--p-color); }
+    .i .mkpi-eyebrow { color: var(--i-color); }
+    .c .mkpi-eyebrow { color: var(--c-color); }
+
+    .mkpi-name { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+    .mkpi-formula { font-size: 11px; color: var(--text-tertiary); font-family: 'SF Mono','Fira Code',monospace; margin: 2px 0 14px; }
+    .mkpi-row { display: flex; align-items: baseline; gap: 12px; }
+    .mkpi-value {
+      font-size: 42px; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1; letter-spacing: -1.5px;
+    }
+    .mkpi-unit { font-size: 20px; color: var(--text-secondary); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 12px; font-weight: 700;
+    }
+    .badge.up   { background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.22); color:var(--up); }
+    .badge.down { background:rgba(239,68,68,.12);  border:1px solid rgba(239,68,68,.22);  color:var(--down); }
+    .mkpi-chart { width:100%; height:68px; }
+
+    /* Section title */
+    .sec-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--text-tertiary);
+      margin-bottom: 11px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sec-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    .sec { margin-bottom: 18px; }
+
+    /* KPI Card Grid */
+    .grid { display: grid; gap: 11px; }
+    .g2 { grid-template-columns: repeat(2,1fr); }
+    .g3 { grid-template-columns: repeat(3,1fr); }
+    .g4 { grid-template-columns: repeat(4,1fr); }
+
+    .kcard {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-m);
+      padding: 15px 17px;
+      transition: background .18s, border-color .18s, transform .18s;
+      cursor: default;
+    }
+    .kcard:hover { background: var(--bg-card-hover); border-color: var(--border-hover); transform: translateY(-1px); }
+    .kcard.tp { border-left: 2.5px solid var(--p-color); }
+    .kcard.ti { border-left: 2.5px solid var(--i-color); }
+    .kcard.ta { border-left: 2.5px solid var(--a-color); }
+    .kcard.tc { border-left: 2.5px solid var(--c-color); }
+    .kcard.tr { border-left: 2.5px solid var(--r-color); }
+
+    .kcard-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:9px; }
+    .kcard-name  { font-size:12px; color:var(--text-secondary); font-weight:500; line-height:1.35; }
+    .kcard-sub   { font-size:10px; color:var(--text-tertiary); font-family:monospace; margin-top:1px; }
+    .kcard-icon  { font-size:13px; flex-shrink:0; margin-top:1px; }
+
+    .kcard-value {
+      font-size: 23px; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.4px; line-height: 1;
+      margin-bottom: 7px; color: var(--text-primary);
+    }
+    .kcard-unit { font-size:13px; font-weight:400; color:var(--text-secondary); margin-left:1px; }
+    .kcard-foot { display:flex; align-items:center; justify-content:space-between; }
+    .kcard-chg  { font-size:11px; font-weight:700; }
+    .kcard-chg.up   { color:var(--up); }
+    .kcard-chg.down { color:var(--down); }
+    .kcard-chg.neu  { color:var(--neutral); }
+    .kcard-spark { width:60px; height:27px; }
+
+    /* Platform Breakdown */
+    .bd-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+    .bd-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--rad-m); padding: 16px 18px;
+    }
+    .bd-label {
+      display:flex; align-items:center; gap:6px;
+      font-size:12px; color:var(--text-tertiary);
+      margin-bottom:10px; font-weight:600;
+      text-transform:uppercase; letter-spacing:.06em; font-size:10px;
+    }
+    .bd-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .bd-row:last-of-type { border-bottom:none; }
+    .bd-row-name  { font-size:12px; color:var(--text-secondary); }
+    .bd-row-val   { font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text-primary); }
+    .bd-bar { height:4px; background:rgba(255,255,255,.06); border-radius:2px; margin-top:10px; overflow:hidden; }
+    .bd-fill { height:100%; border-radius:2px; transition:width .6s ease; }
+
+    /* Funnel Cards */
+    .funnel-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+    .fcard {
+      background:var(--bg-card);
+      border-radius: var(--rad-m); overflow:hidden;
+    }
+    .fcard.fc { border: 1px solid var(--c-border); }
+    .fcard.fr { border: 1px solid var(--r-border); }
+
+    .fcard-head {
+      padding: 12px 18px; border-bottom: 1px solid var(--border);
+      display:flex; align-items:center; gap:8px;
+    }
+    .fcard-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .fcard-title { font-size:13px; font-weight:700; color:var(--text-primary); }
+
+    .fcard-body { padding:10px; display:flex; flex-direction:column; gap:7px; }
+
+    .fstep {
+      display:flex; align-items:center; gap:10px;
+      padding: 9px 11px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid transparent;
+      border-radius: var(--rad-s);
+      transition: background .18s, border-color .18s;
+    }
+    .fstep:hover { background:rgba(255,255,255,.045); border-color:var(--border); }
+    .fstep-num {
+      width:20px; height:20px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:10px; font-weight:800; flex-shrink:0;
+    }
+    .fc .fstep-num { background:rgba(249,115,22,.15); color:var(--c-color); }
+    .fr .fstep-num { background:rgba(244,63,94,.15); color:var(--r-color); }
+    .fstep-body { flex:1; min-width:0; }
+    .fstep-name { font-size:12px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .fstep-value { font-size:17px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text-primary); }
+    .fstep-chg { font-size:11px; font-weight:700; flex-shrink:0; }
+
+    .fcard-footer {
+      margin: 0 10px 10px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.025);
+      border: 1px dashed rgba(255,255,255,.07);
+      border-radius: var(--rad-s);
+    }
+    .ffoot-title { font-size:10px; color:var(--text-tertiary); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:7px; }
+    .ffoot-metrics { display:flex; gap:18px; flex-wrap:wrap; }
+    .ffoot-metric { display:flex; flex-direction:column; gap:1px; }
+    .ffoot-label { font-size:10px; color:var(--text-tertiary); }
+    .ffoot-value { font-size:13px; font-weight:700; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+
+    /* ── Arrow SVGs ── */
+    .icon-up   { color:var(--up); }
+    .icon-down { color:var(--down); }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media(max-width:1100px) {
+      .g4 { grid-template-columns:repeat(2,1fr); }
+    }
+    @media(max-width:860px) {
+      .g3 { grid-template-columns:repeat(2,1fr); }
+      .funnel-grid,.bd-grid { grid-template-columns:1fr; }
+      .hero { grid-template-columns:1fr; }
+      .hero-chart { display:none; }
+      .main-kpi { grid-template-columns:1fr; }
+      .mkpi-chart { display:none; }
+    }
+    @media(max-width:580px) {
+      .hero { padding: 20px 18px; }
+      .hero-value { font-size:42px; }
+      .g2 { grid-template-columns:1fr 1fr; }
+      .g3,.g4 { grid-template-columns:repeat(2,1fr); }
+      .main { padding:14px 14px 64px; }
+      .tab-sub { display:none; }
+      .layer-tab { padding:9px 10px; font-size:12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════ HEADER ════════════════════ -->
+<header class="header">
+  <div class="brand">
+    <div class="brand-dot" aria-hidden="true"></div>
+    營運數據儀表板
+  </div>
+  <div class="header-right">
+    <div class="time-filter" role="group" aria-label="時間篩選">
+      <button class="time-btn" onclick="setTime(this,'today')" aria-pressed="false">今日</button>
+      <button class="time-btn active" onclick="setTime(this,'week')"  aria-pressed="true">本週</button>
+      <button class="time-btn" onclick="setTime(this,'month')" aria-pressed="false">本月</button>
+    </div>
+    <span class="ts" id="ts" aria-live="polite"></span>
+  </div>
+</header>
+
+<!-- ════════════════════ MAIN ════════════════════ -->
+<main class="main">
+
+  <!-- ── ARPU Hero ── -->
+  <section aria-label="核心指標 ARPU">
+    <div class="hero">
+      <div>
+        <div class="hero-eyebrow">頂層核心指標</div>
+        <div class="hero-title">ARPU &emsp; 每活躍用戶平均收入</div>
+        <div class="hero-value-row">
+          <div>
+            <span class="hero-unit">NT$</span><span class="hero-value" id="arpuNum">0</span>
+          </div>
+          <div class="hero-badge" id="arpuBadge">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M6 9.5V2.5M6 2.5L3 5.5M6 2.5L9 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span id="arpuChgTxt">+8.3%</span>
+          </div>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-item">
+            <span class="meta-label">總營收</span>
+            <span class="meta-value" id="mRevenue">NT$12.4M</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">活躍用戶</span>
+            <span class="meta-value" id="mUsers">248,315</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">環比</span>
+            <span class="meta-value" id="mChg" style="color:var(--up)">+8.3%</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">上期 ARPU</span>
+            <span class="meta-value" id="mPrev">NT$46.2</span>
+          </div>
+        </div>
+        <div class="hero-formula">
+          <span>公式：</span>
+          <span class="formula-chip">ARPU = 總營收 ÷ 活躍用戶</span>
+          <span>= f(PVs/UU，會員登入率，訂單轉換率)</span>
+        </div>
+      </div>
+      <svg class="hero-chart" id="arpuSpark" viewBox="0 0 220 90" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+  </section>
+
+  <!-- ── Layer Tabs ── -->
+  <nav class="layer-nav" role="tablist" aria-label="指標層級">
+    <button class="layer-tab active" data-l="platform"
+            role="tab" aria-selected="true" aria-controls="panel-platform"
+            onclick="switchTab('platform')">
+      <span class="tab-dot" aria-hidden="true"></span>
+      <span>層級一 — 平台 <span class="tab-sub">PVs/UU</span></span>
+    </button>
+    <button class="layer-tab" data-l="identity"
+            role="tab" aria-selected="false" aria-controls="panel-identity"
+            onclick="switchTab('identity')">
+      <span class="tab-dot" aria-hidden="true"></span>
+      <span>層級二 — 身分 <span class="tab-sub">會員登入率</span></span>
+    </button>
+    <button class="layer-tab" data-l="conversion"
+            role="tab" aria-selected="false" aria-controls="panel-conversion"
+            onclick="switchTab('conversion')">
+      <span class="tab-dot" aria-hidden="true"></span>
+      <span>層級三 — 轉換 <span class="tab-sub">訂單轉換率</span></span>
+    </button>
+  </nav>
+
+  <!-- ══════════ PANEL 1: PLATFORM ══════════ -->
+  <div class="layer-panel active" id="panel-platform" role="tabpanel" aria-labelledby="tab-platform">
+
+    <div class="main-kpi p">
+      <div>
+        <div class="mkpi-eyebrow">平台主指標</div>
+        <div class="mkpi-name">PVs / UU &emsp; 每用戶平均頁面瀏覽量</div>
+        <div class="mkpi-formula">PVs ÷ 不重複訪客 (UU)</div>
+        <div class="mkpi-row">
+          <span class="mkpi-value" id="pvuuVal">0</span>
+          <span class="mkpi-unit">頁/人</span>
+          <span class="badge up" id="pvuuBadge">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 8V2M5 2L2.5 4.5M5 2L7.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="pvuuChgTxt">+5.2%</span>
+          </span>
+        </div>
+      </div>
+      <svg class="mkpi-chart" id="pvuuSpark" viewBox="0 0 190 68" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">流量規模</div>
+      <div class="grid g3" id="trafficGrid"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">活躍黏著</div>
+      <div class="grid g2" id="stickyGrid"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">平台分拆</div>
+      <div class="bd-grid" id="bdGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════ PANEL 2: IDENTITY ══════════ -->
+  <div class="layer-panel" id="panel-identity" role="tabpanel" aria-labelledby="tab-identity">
+
+    <div class="main-kpi i">
+      <div>
+        <div class="mkpi-eyebrow">身分主指標</div>
+        <div class="mkpi-name">會員登入率 &emsp; 身分識別比率</div>
+        <div class="mkpi-formula">登入用戶 ÷ 全部用戶</div>
+        <div class="mkpi-row">
+          <span class="mkpi-value" id="loginVal">0</span>
+          <span class="mkpi-unit">%</span>
+          <span class="badge up" id="loginBadge">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 8V2M5 2L2.5 4.5M5 2L7.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="loginChgTxt">+2.1%</span>
+          </span>
+        </div>
+      </div>
+      <svg class="mkpi-chart" id="loginSpark" viewBox="0 0 190 68" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">廣告軸</div>
+      <div class="grid g4" id="adGrid"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">會員軸</div>
+      <div class="grid g4" id="memberGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════ PANEL 3: CONVERSION ══════════ -->
+  <div class="layer-panel" id="panel-conversion" role="tabpanel" aria-labelledby="tab-conversion">
+
+    <div class="main-kpi c">
+      <div>
+        <div class="mkpi-eyebrow">轉換主指標</div>
+        <div class="mkpi-name">訂單轉換率 &emsp; 訂閱 ＋ 購買合併</div>
+        <div class="mkpi-formula">下單數 ÷ 到達轉換頁人數</div>
+        <div class="mkpi-row">
+          <span class="mkpi-value" id="orderVal">0</span>
+          <span class="mkpi-unit">%</span>
+          <span class="badge down" id="orderBadge">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M5 2V8M5 8L2.5 5.5M5 8L7.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="orderChgTxt">−1.4%</span>
+          </span>
+        </div>
+      </div>
+      <svg class="mkpi-chart" id="orderSpark" viewBox="0 0 190 68" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+
+    <div class="funnel-grid" id="funnelGrid"></div>
+
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════
+   MOCK DATA
+═══════════════════════════════════════════ */
+const DATA = {
+  today: {
+    arpu:  { value:49.1, chg:'+5.9%', chgUp:true, revenue:'NT$2.1M', users:'42,770', prev:'NT$46.4', spark:[44,45,45.5,46,46.8,47.2,47.9,48.1,48.6,49.0,48.8,49.1] },
+    pvuu:  { value:8.1, chg:'+3.8%', chgUp:true,  spark:[7.0,7.2,7.4,7.5,7.6,7.8,7.9,7.9,8.0,8.1,8.0,8.1] },
+    login: { value:63.4, chg:'+1.6%', chgUp:true, spark:[59,60,61,62,62.2,62.8,63,63.2,63.3,63.4,63.3,63.4] },
+    order: { value:3.6, chg:'-2.1%', chgUp:false,  spark:[4.4,4.2,4.0,4.1,3.9,3.8,3.7,3.8,3.6,3.7,3.5,3.6] },
+    traffic:[
+      { name:'總訪客 UV',   value:'42.8K', unit:'', chg:'+4.2%', up:true,  spark:[35,37,38,38.5,39,40,41,41.5,42,42.5,42.7,42.8] },
+      { name:'訪次 Sessions',value:'218K',unit:'', chg:'+3.9%', up:true,  spark:[185,192,198,202,207,210,213,215,216,217,218,218] },
+      { name:'PVs WoW 週環比',value:'+6.1',unit:'%', chg:'vs 昨日', up:true, spark:[1.8,2.5,4.0,4.5,5.2,5.6,6.0,6.1,5.9,6.0,6.1,6.1] },
+    ],
+    sticky:[
+      { name:'WAU/MAU 黏著率',value:'27.9', unit:'%', chg:'+0.8%', up:true, spark:[24.5,25,25.5,26,26.5,26.8,27,27.3,27.5,27.7,27.8,27.9] },
+      { name:'DAU/MAU（選用）',value:'9.4', unit:'%', chg:'+0.2%', up:true, spark:[8.5,8.7,8.8,8.9,9.0,9.1,9.2,9.3,9.3,9.4,9.3,9.4] },
+    ],
+    adMetrics:[
+      { name:'廣告收入',   value:'NT$542K', unit:'', chg:'+2.1%', up:true,  sub:'PVs × CPM ÷ 1000', spark:[460,475,490,495,505,515,520,525,530,538,540,542] },
+      { name:'版位 CTR',   value:'1.81',    unit:'%',chg:'+0.08%',up:true,  sub:'', spark:[1.65,1.68,1.70,1.72,1.74,1.76,1.78,1.79,1.80,1.81,1.80,1.81] },
+      { name:'廣告填充率', value:'92.1',    unit:'%',chg:'-0.6%', up:false, sub:'', spark:[94.0,93.5,93.0,92.8,92.6,92.4,92.3,92.2,92.1,92.2,92.0,92.1] },
+      { name:'CPM 單價',   value:'NT$42.1', unit:'', chg:'+1.4%', up:true,  sub:'', spark:[38.5,39,39.5,40,40.5,41,41.2,41.6,41.8,42.0,42.0,42.1] },
+    ],
+    memberMetrics:[
+      { name:'新會員數',        value:'2,086',unit:'', chg:'+7.1%', up:true,  spark:[1700,1780,1840,1880,1920,1960,2000,2030,2050,2070,2080,2086] },
+      { name:'會員流失率',      value:'2.2',  unit:'%',chg:'-0.2%', up:true,  spark:[3.1,2.9,2.8,2.7,2.6,2.5,2.4,2.3,2.3,2.2,2.3,2.2] },
+      { name:'活躍會員比',      value:'70.8', unit:'%',chg:'+1.2%', up:true,  spark:[66,67,68,69,69.5,70,70.2,70.5,70.6,70.8,70.7,70.8] },
+      { name:'訪客→會員轉換率', value:'4.1',  unit:'%',chg:'+0.4%', up:true,  spark:[3.4,3.5,3.7,3.8,3.9,4.0,4.0,4.1,4.1,4.1,4.0,4.1] },
+    ],
+    subFunnel:[
+      { name:'付費牆轉換率', value:'6.5%', chg:'+0.1%', up:true  },
+      { name:'新訂數',       value:'810',  chg:'+7.4%', up:true  },
+      { name:'次月續訂率',   value:'71.8%',chg:'+0.9%', up:true  },
+      { name:'整體續訂率',   value:'83.7%',chg:'+0.4%', up:true  },
+    ],
+    subFoot:{ LTV:'NT$1,821', MRR:'NT$2.0M', 'LTV:CAC':'3.7×' },
+    purFunnel:[
+      { name:'加入購物車率',  value:'17.9%',chg:'+0.8%', up:true  },
+      { name:'購物車轉換率',  value:'41.9%',chg:'-2.5%', up:false },
+      { name:'回購率',        value:'27.8%',chg:'+0.2%', up:true  },
+    ],
+    purFoot:{ NRR:'106%', 'Cross-sell':'+11.2%', 'Up-sell':'+7.2%', '回收期':'4.4月' },
+  },
+
+  week: {
+    arpu:  { value:50.0, chg:'+8.3%', chgUp:true, revenue:'NT$12.4M', users:'248,315', prev:'NT$46.2', spark:[38,40,42,44,41,43,47,46,48,50,49,50] },
+    pvuu:  { value:8.4, chg:'+5.2%', chgUp:true,  spark:[6.8,7.1,7.3,7.8,7.5,7.9,8.1,8.0,8.3,8.4,8.2,8.4] },
+    login: { value:64.2, chg:'+2.1%', chgUp:true, spark:[58,60,61,62,61,63,63.5,64,64.1,63.8,64.2,64.2] },
+    order: { value:3.8, chg:'-1.4%', chgUp:false,  spark:[4.5,4.3,4.1,4.2,3.9,4.0,3.8,3.9,3.7,3.8,3.6,3.8] },
+    traffic:[
+      { name:'總訪客 UV',    value:'248K', unit:'', chg:'+6.1%', up:true, spark:[180,195,210,205,225,230,238,242,245,248,247,248] },
+      { name:'訪次 Sessions',value:'1.28M',unit:'', chg:'+4.8%', up:true, spark:[950,1020,1050,1080,1100,1120,1150,1190,1220,1250,1275,1280] },
+      { name:'PVs WoW 週環比',value:'+7.3',unit:'%',chg:'vs 上週',up:true,spark:[2.1,3.4,5.2,4.8,6.1,5.9,7.0,7.3,6.8,7.1,7.2,7.3] },
+    ],
+    sticky:[
+      { name:'WAU/MAU 黏著率',value:'28.4',unit:'%',chg:'+1.2%',up:true,spark:[24,25,26,26.5,27,27.2,28,28.1,28.3,28.4,28.2,28.4] },
+      { name:'DAU/MAU（選用）',value:'9.6', unit:'%',chg:'+0.4%',up:true,spark:[8.2,8.5,8.8,9.0,9.1,9.2,9.4,9.5,9.5,9.6,9.5,9.6] },
+    ],
+    adMetrics:[
+      { name:'廣告收入',   value:'NT$3.2M',unit:'', chg:'+3.5%', up:true,  sub:'PVs × CPM ÷ 1000', spark:[2.6,2.7,2.9,2.8,3.0,3.1,3.0,3.1,3.2,3.2,3.1,3.2] },
+      { name:'版位 CTR',   value:'1.84',   unit:'%',chg:'+0.12%',up:true,  sub:'',spark:[1.6,1.65,1.7,1.72,1.75,1.78,1.8,1.82,1.83,1.84,1.83,1.84] },
+      { name:'廣告填充率', value:'92.3',   unit:'%',chg:'-0.5%', up:false, sub:'',spark:[94,93.5,93,92.8,92.5,92.3,92.8,92.5,92.3,92.4,92.2,92.3] },
+      { name:'CPM 單價',   value:'NT$42.5',unit:'', chg:'+2.1%', up:true,  sub:'',spark:[38,39,40,40.5,41,41.5,42,42.2,42.3,42.5,42.4,42.5] },
+    ],
+    memberMetrics:[
+      { name:'新會員數',        value:'12,480',unit:'',chg:'+8.4%',up:true, spark:[9200,9800,10500,10900,11200,11500,11800,12000,12100,12300,12400,12480] },
+      { name:'會員流失率',      value:'2.1',   unit:'%',chg:'-0.3%',up:true,spark:[3.2,3.0,2.9,2.8,2.6,2.5,2.4,2.3,2.2,2.1,2.2,2.1] },
+      { name:'活躍會員比',      value:'71.4',  unit:'%',chg:'+1.8%',up:true,spark:[65,66,68,69,70,70.5,71,71.2,71.3,71.4,71.2,71.4] },
+      { name:'訪客→會員轉換率', value:'4.2',   unit:'%',chg:'+0.6%',up:true,spark:[3.2,3.4,3.6,3.7,3.8,3.9,4.0,4.1,4.15,4.2,4.18,4.2] },
+    ],
+    subFunnel:[
+      { name:'付費牆轉換率', value:'6.8%', chg:'+0.3%', up:true },
+      { name:'新訂數',       value:'4,826',chg:'+9.2%', up:true },
+      { name:'次月續訂率',   value:'72.5%',chg:'+1.5%', up:true },
+      { name:'整體續訂率',   value:'84.2%',chg:'+0.8%', up:true },
+    ],
+    subFoot:{ LTV:'NT$1,856', MRR:'NT$2.1M', 'LTV:CAC':'3.8×' },
+    purFunnel:[
+      { name:'加入購物車率', value:'18.3%',chg:'+1.2%', up:true  },
+      { name:'購物車轉換率', value:'42.7%',chg:'-2.1%', up:false },
+      { name:'回購率',       value:'28.4%',chg:'+0.5%', up:true  },
+    ],
+    purFoot:{ NRR:'108%', 'Cross-sell':'+12.4%', 'Up-sell':'+7.8%', '回收期':'4.2月' },
+  },
+
+  month: {
+    arpu:  { value:52.6, chg:'+13.8%', chgUp:true, revenue:'NT$49.5M', users:'940,681', prev:'NT$46.2', spark:[38,40,42,43,44,45,46,47,48,50,51,52.6] },
+    pvuu:  { value:8.9, chg:'+11.2%', chgUp:true,  spark:[6.2,6.5,6.8,7.1,7.4,7.6,7.9,8.1,8.4,8.6,8.8,8.9] },
+    login: { value:65.8, chg:'+4.4%', chgUp:true, spark:[57,58.5,60,61,62,63,63.5,64,64.8,65.2,65.5,65.8] },
+    order: { value:4.1, chg:'+2.5%', chgUp:true,   spark:[3.5,3.6,3.7,3.8,3.9,4.0,4.0,4.1,4.1,4.2,4.1,4.1] },
+    traffic:[
+      { name:'總訪客 UV',    value:'940K', unit:'', chg:'+11.2%',up:true, spark:[740,775,800,820,840,860,880,900,915,928,936,940] },
+      { name:'訪次 Sessions',value:'5.06M',unit:'', chg:'+9.8%', up:true, spark:[3.9,4.1,4.3,4.4,4.5,4.6,4.7,4.8,4.9,5.0,5.05,5.06] },
+      { name:'PVs WoW 週環比',value:'+9.8',unit:'%',chg:'vs 上月',up:true,spark:[3.2,4.8,6.5,7.2,8.0,8.5,9.0,9.4,9.6,9.8,9.7,9.8] },
+    ],
+    sticky:[
+      { name:'WAU/MAU 黏著率',value:'30.1',unit:'%',chg:'+3.5%',up:true,spark:[22,24,25,26,27,28,28.5,29,29.5,29.8,30,30.1] },
+      { name:'DAU/MAU（選用）',value:'10.2',unit:'%',chg:'+1.6%',up:true,spark:[7.8,8.1,8.4,8.7,9.0,9.2,9.5,9.7,9.9,10.0,10.1,10.2] },
+    ],
+    adMetrics:[
+      { name:'廣告收入',   value:'NT$12.8M',unit:'',chg:'+6.2%', up:true, sub:'PVs × CPM ÷ 1000',spark:[10.2,10.6,11.0,11.3,11.6,11.8,12.0,12.2,12.4,12.6,12.7,12.8] },
+      { name:'版位 CTR',   value:'1.90',    unit:'%',chg:'+0.2%', up:true, sub:'',spark:[1.62,1.68,1.72,1.76,1.80,1.83,1.85,1.87,1.88,1.90,1.89,1.90] },
+      { name:'廣告填充率', value:'93.1',    unit:'%',chg:'+0.3%', up:true, sub:'',spark:[92,92.2,92.5,92.8,93.0,92.8,93.1,93.0,93.1,93.2,93.1,93.1] },
+      { name:'CPM 單價',   value:'NT$44.8', unit:'',chg:'+5.4%', up:true, sub:'',spark:[38.5,39.5,40.5,41.5,42.5,43.0,43.5,44.0,44.3,44.6,44.7,44.8] },
+    ],
+    memberMetrics:[
+      { name:'新會員數',        value:'48,420',unit:'',chg:'+14.2%',up:true,spark:[34000,36000,38000,40000,41500,42800,44000,45200,46500,47500,48000,48420] },
+      { name:'會員流失率',      value:'1.9',   unit:'%',chg:'-0.5%', up:true,spark:[3.0,2.8,2.6,2.5,2.4,2.3,2.2,2.1,2.0,1.9,2.0,1.9] },
+      { name:'活躍會員比',      value:'73.2',  unit:'%',chg:'+3.6%', up:true,spark:[62,64,66,68,69.5,70.5,71.5,72,72.5,73,73.1,73.2] },
+      { name:'訪客→會員轉換率', value:'4.5',   unit:'%',chg:'+1.2%', up:true,spark:[3.0,3.2,3.5,3.7,3.9,4.0,4.1,4.2,4.3,4.4,4.45,4.5] },
+    ],
+    subFunnel:[
+      { name:'付費牆轉換率', value:'7.4%', chg:'+1.2%', up:true },
+      { name:'新訂數',       value:'19,852',chg:'+18.4%',up:true },
+      { name:'次月續訂率',   value:'74.1%',chg:'+3.1%', up:true },
+      { name:'整體續訂率',   value:'85.6%',chg:'+2.2%', up:true },
+    ],
+    subFoot:{ LTV:'NT$1,940', MRR:'NT$2.4M', 'LTV:CAC':'4.1×' },
+    purFunnel:[
+      { name:'加入購物車率', value:'20.1%',chg:'+3.0%', up:true },
+      { name:'購物車轉換率', value:'45.2%',chg:'+0.4%', up:true },
+      { name:'回購率',       value:'31.6%',chg:'+3.7%', up:true },
+    ],
+    purFoot:{ NRR:'113%', 'Cross-sell':'+16.8%', 'Up-sell':'+11.4%', '回收期':'3.8月' },
+  }
+};
+
+/* ═══════════════════════════════════════════
+   SPARKLINE RENDERER
+═══════════════════════════════════════════ */
+function spark(svgEl, data, color, W, H, fill=true) {
+  if (!svgEl || !data || data.length < 2) return;
+  const min = Math.min(...data), max = Math.max(...data), rng = max - min || 1;
+  const pd = 3;
+  const pts = data.map((v,i) => {
+    const x = pd + i / (data.length-1) * (W - pd*2);
+    const y = H - pd - (v - min) / rng * (H - pd*2);
+    return [x, y];
+  });
+  const pStr = pts.map(p => p.join(',')).join(' ');
+  svgEl.innerHTML = '';
+  if (fill) {
+    const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('points', `${pts[0][0]},${H} ${pStr} ${pts[pts.length-1][0]},${H}`);
+    poly.setAttribute('fill', color); poly.setAttribute('opacity', '.09');
+    svgEl.appendChild(poly);
+  }
+  const line = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+  line.setAttribute('points', pStr); line.setAttribute('fill','none');
+  line.setAttribute('stroke', color); line.setAttribute('stroke-width','2');
+  line.setAttribute('stroke-linecap','round'); line.setAttribute('stroke-linejoin','round');
+  svgEl.appendChild(line);
+  const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('cx', pts[pts.length-1][0]); dot.setAttribute('cy', pts[pts.length-1][1]);
+  dot.setAttribute('r','3'); dot.setAttribute('fill', color);
+  svgEl.appendChild(dot);
+}
+
+function inlineSpark(svgEl, data, color) {
+  if (!svgEl || !data || data.length < 2) return;
+  const W=60, H=27, pd=2;
+  const min = Math.min(...data), max = Math.max(...data), rng = max - min || 1;
+  const pts = data.map((v,i) => {
+    const x = pd + i / (data.length-1) * (W - pd*2);
+    const y = H - pd - (v - min) / rng * (H - pd*2);
+    return `${x},${y}`;
+  }).join(' ');
+  svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svgEl.innerHTML = '';
+  const line = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+  line.setAttribute('points',pts); line.setAttribute('fill','none');
+  line.setAttribute('stroke',color); line.setAttribute('stroke-width','1.5');
+  line.setAttribute('stroke-linecap','round'); line.setAttribute('stroke-linejoin','round');
+  svgEl.appendChild(line);
+}
+
+/* ═══════════════════════════════════════════
+   COUNTER ANIMATION
+═══════════════════════════════════════════ */
+function counter(el, to, dur=750, dec=1) {
+  const start = performance.now();
+  (function step(now) {
+    const t = Math.min((now-start)/dur, 1);
+    const e = 1 - Math.pow(1-t, 3);
+    el.textContent = (to * e).toFixed(dec);
+    if (t < 1) requestAnimationFrame(step);
+  })(start);
+}
+
+/* ═══════════════════════════════════════════
+   ICON SVG STRINGS
+═══════════════════════════════════════════ */
+const UP_ICON   = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const DOWN_ICON = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 3V9M6 9L3 6M6 9L9 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+/* ═══════════════════════════════════════════
+   CARD BUILDER
+═══════════════════════════════════════════ */
+let _sparkIdx = 0;
+function kcard(d, tint) {
+  const id = 'sp_' + (_sparkIdx++);
+  return `<div class="kcard ${tint}">
+    <div class="kcard-head">
+      <div>
+        <div class="kcard-name">${d.name}</div>
+        ${d.sub ? `<div class="kcard-sub">${d.sub}</div>` : ''}
+      </div>
+      <div class="kcard-icon ${d.up?'icon-up':'icon-down'}">${d.up ? UP_ICON : DOWN_ICON}</div>
+    </div>
+    <div class="kcard-value">${d.value}<span class="kcard-unit">${d.unit}</span></div>
+    <div class="kcard-foot">
+      <span class="kcard-chg ${d.up?'up':'down'}">${d.chg}</span>
+      <svg class="kcard-spark" id="${id}" aria-hidden="true"></svg>
+    </div>
+  </div>`;
+}
+
+function fcard(d, isConv) {
+  const cls    = isConv ? 'fc' : 'fr';
+  const dotClr = isConv ? 'var(--c-color)' : 'var(--r-color)';
+  const sClass = isConv ? 'fc' : 'fr';
+  const items  = d.steps.map((s,i) => `
+    <div class="fstep">
+      <div class="fstep-num">${i+1}</div>
+      <div class="fstep-body">
+        <div class="fstep-name">${s.name}</div>
+        <div class="fstep-value">${s.value}</div>
+      </div>
+      <span class="fstep-chg" style="color:${s.up?'var(--up)':'var(--down)'}">${s.up?'↑':'↓'} ${s.chg}</span>
+    </div>`).join('');
+  const footer = Object.entries(d.foot).map(([k,v]) => `
+    <div class="ffoot-metric">
+      <span class="ffoot-label">${k}</span>
+      <span class="ffoot-value">${v}</span>
+    </div>`).join('');
+  return `<div class="fcard ${cls}">
+    <div class="fcard-head">
+      <div class="fcard-dot" style="background:${dotClr}"></div>
+      <div class="fcard-title">${d.title}</div>
+    </div>
+    <div class="fcard-body">${items}</div>
+    <div class="fcard-footer">
+      <div class="ffoot-title">延伸指標</div>
+      <div class="ffoot-metrics">${footer}</div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════ */
+let period = 'week';
+
+function render() {
+  _sparkIdx = 0;
+  const d = DATA[period];
+
+  /* ── ARPU Hero ── */
+  counter(document.getElementById('arpuNum'), d.arpu.value, 900, 1);
+  document.getElementById('mRevenue').textContent = d.arpu.revenue;
+  document.getElementById('mUsers').textContent   = d.arpu.users;
+  document.getElementById('mPrev').textContent    = d.arpu.prev;
+  document.getElementById('mChg').textContent     = d.arpu.chg;
+  document.getElementById('arpuChgTxt').textContent = d.arpu.chg;
+  const arpuBadge = document.getElementById('arpuBadge');
+  arpuBadge.className = 'hero-badge';
+  spark(document.getElementById('arpuSpark'), d.arpu.spark, '#a855f7', 220, 90);
+
+  /* ── Layer 1 ── */
+  counter(document.getElementById('pvuuVal'), d.pvuu.value, 700, 1);
+  document.getElementById('pvuuChgTxt').textContent = d.pvuu.chg;
+  const pvuuBadge = document.getElementById('pvuuBadge');
+  pvuuBadge.className = `badge ${d.pvuu.chgUp ? 'up' : 'down'}`;
+  spark(document.getElementById('pvuuSpark'), d.pvuu.spark, '#10b981', 190, 68);
+
+  document.getElementById('trafficGrid').innerHTML = d.traffic.map(m => kcard(m,'tp')).join('');
+  document.getElementById('stickyGrid').innerHTML  = d.sticky.map(m => kcard(m,'tp')).join('');
+
+  document.getElementById('bdGrid').innerHTML = `
+    <div class="bd-card">
+      <div class="bd-label">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <rect x="1" y="2" width="12" height="10" rx="2" stroke="#64748b" stroke-width="1.2" fill="none"/>
+          <path d="M4 7h6M4 9.5h3.5" stroke="#64748b" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        Web 平台
+      </div>
+      <div class="bd-row"><span class="bd-row-name">SEO 自然搜尋</span><span class="bd-row-val">54.2%</span></div>
+      <div class="bd-row"><span class="bd-row-name">SEM 付費搜尋</span><span class="bd-row-val">18.7%</span></div>
+      <div class="bd-row"><span class="bd-row-name">Direct 直接</span><span class="bd-row-val">12.4%</span></div>
+      <div class="bd-bar"><div class="bd-fill" style="width:72.9%;background:var(--p-color)"></div></div>
+    </div>
+    <div class="bd-card">
+      <div class="bd-label">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <rect x="4" y="0.5" width="6" height="13" rx="2" stroke="#64748b" stroke-width="1.2" fill="none"/>
+          <circle cx="7" cy="11.5" r="0.9" fill="#64748b"/>
+        </svg>
+        App 平台
+      </div>
+      <div class="bd-row"><span class="bd-row-name">Push 推播</span><span class="bd-row-val">9.6%</span></div>
+      <div class="bd-row"><span class="bd-row-name">ASO 搜尋優化</span><span class="bd-row-val">5.1%</span></div>
+      <div class="bd-row"><span class="bd-row-name">Organic 自然</span><span class="bd-row-val">27.1%</span></div>
+      <div class="bd-bar"><div class="bd-fill" style="width:27.1%;background:var(--i-color)"></div></div>
+    </div>`;
+
+  /* ── Layer 2 ── */
+  counter(document.getElementById('loginVal'), d.login.value, 700, 1);
+  document.getElementById('loginChgTxt').textContent = d.login.chg;
+  document.getElementById('loginBadge').className = `badge ${d.login.chgUp ? 'up' : 'down'}`;
+  spark(document.getElementById('loginSpark'), d.login.spark, '#3b82f6', 190, 68);
+
+  document.getElementById('adGrid').innerHTML     = d.adMetrics.map(m => kcard(m,'ta')).join('');
+  document.getElementById('memberGrid').innerHTML = d.memberMetrics.map(m => kcard(m,'ti')).join('');
+
+  /* ── Layer 3 ── */
+  counter(document.getElementById('orderVal'), d.order.value, 700, 1);
+  document.getElementById('orderChgTxt').textContent = d.order.chg;
+  document.getElementById('orderBadge').className = `badge ${d.order.chgUp ? 'up' : 'down'}`;
+  spark(document.getElementById('orderSpark'), d.order.spark, '#f97316', 190, 68);
+
+  document.getElementById('funnelGrid').innerHTML =
+    fcard({ title:'訂閱漏斗', steps: d.subFunnel, foot: d.subFoot }, true) +
+    fcard({ title:'購買漏斗', steps: d.purFunnel, foot: d.purFoot }, false);
+
+  /* ── Inline sparklines (after DOM update) ── */
+  requestAnimationFrame(() => {
+    const all = [
+      ...d.traffic.map(m => ({ s:m.spark, c:'#10b981' })),
+      ...d.sticky.map(m  => ({ s:m.spark, c:'#10b981' })),
+      ...d.adMetrics.map(m     => ({ s:m.spark, c:'#a8a29e' })),
+      ...d.memberMetrics.map(m => ({ s:m.spark, c:'#3b82f6' })),
+    ];
+    document.querySelectorAll('.kcard-spark').forEach((svg, i) => {
+      if (all[i]) inlineSpark(svg, all[i].s, all[i].c);
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════
+   TAB SWITCH
+═══════════════════════════════════════════ */
+function switchTab(l) {
+  document.querySelectorAll('.layer-tab').forEach(t => {
+    const active = t.dataset.l === l;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-selected', active);
+  });
+  document.querySelectorAll('.layer-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-' + l);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   TIME FILTER
+═══════════════════════════════════════════ */
+function setTime(btn, p) {
+  period = p;
+  document.querySelectorAll('.time-btn').forEach(b => {
+    b.classList.toggle('active', b === btn);
+    b.setAttribute('aria-pressed', b === btn);
+  });
+  render();
+}
+
+/* ═══════════════════════════════════════════
+   TIMESTAMP
+═══════════════════════════════════════════ */
+function tick() {
+  document.getElementById('ts').textContent =
+    '更新於 ' + new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+/* ── INIT ── */
+render();
+tick();
+</script>
+</body>
+</html>
