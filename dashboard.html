@@ -671,6 +671,13 @@
             <span id="loginChgTxt">+2.1%</span>
           </span>
         </div>
+        <div class="mkpi-secondary">
+          <span class="mkpi-sec-label">總會員數</span>
+          <span class="mkpi-sec-value" id="loginTotalVal">—</span>
+          <span style="color:var(--text-tertiary);font-size:14px;padding:0 2px">|</span>
+          <span class="mkpi-sec-label">登入會員數</span>
+          <span class="mkpi-sec-value" id="loginActiveVal">—</span>
+        </div>
       </div>
       <svg class="mkpi-chart" id="loginSpark" viewBox="0 0 190 68" preserveAspectRatio="none" aria-hidden="true"></svg>
     </div>
@@ -688,6 +695,11 @@
     <div class="sec">
       <div class="sec-title">訪客會員比</div>
       <div class="grid g4" id="vmRatioGrid"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">EDM ／ 電子報　開信與點擊率</div>
+      <div class="grid g4" id="edmGrid"></div>
     </div>
 
   </div>
@@ -741,7 +753,7 @@ const DATA = {
   today: {
     arpu:  { value:49.1, chg:'+5.9%', chgUp:true, revenue:'NT$2.1M', users:'42,770', prev:'NT$46.4', spark:[44,45,45.5,46,46.8,47.2,47.9,48.1,48.6,49.0,48.8,49.1] },
     pvuu:  { value:8.1, chg:'+3.8%', chgUp:true,  spark:[7.0,7.2,7.4,7.5,7.6,7.8,7.9,7.9,8.0,8.1,8.0,8.1] },
-    login: { value:63.4, chg:'+1.6%', chgUp:true, spark:[59,60,61,62,62.2,62.8,63,63.2,63.3,63.4,63.3,63.4] },
+    login: { value:63.4, chg:'+1.6%', chgUp:true, spark:[59,60,61,62,62.2,62.8,63,63.2,63.3,63.4,63.3,63.4], total:'920K', active:'583K' },
     order:      { value:3.6, chg:'-2.1%', chgUp:false, spark:[4.4,4.2,4.0,4.1,3.9,3.8,3.7,3.8,3.6,3.7,3.5,3.6] },
     orderCount: { value:'1,248',    chg:'+12.4%', chgUp:true },
     orderTotal: { value:'NT$2.1M',  chg:'+11.2%', chgUp:true },
@@ -773,6 +785,12 @@ const DATA = {
       { name:'會員總PVs 佔比', value:'38.4', unit:'%', chg:'+0.6% 前期比', up:true, spark:[35,35.5,36,36.5,37,37.2,37.8,38.0,38.2,38.4,38.3,38.4] },
       { name:'訪客總PVs 佔比', value:'61.6', unit:'%', chg:'-0.6% 前期比', up:false,spark:[65,64.5,64,63.5,63,62.8,62.2,62.0,61.8,61.6,61.7,61.6] },
     ],
+    edmMetrics:[
+      { name:'EDM 開信率',    value:'24.8', unit:'%', chg:'+1.2% 前期比', up:true,  spark:[21,21.5,22,22.5,23,23.2,23.5,24.0,24.2,24.5,24.7,24.8] },
+      { name:'EDM 點擊率',    value:'4.2',  unit:'%', chg:'+0.3% 前期比', up:true,  spark:[3.4,3.5,3.6,3.7,3.8,3.9,4.0,4.0,4.1,4.2,4.1,4.2] },
+      { name:'電子報 開信率', value:'19.6', unit:'%', chg:'-0.4% 前期比', up:false, spark:[21,20.8,20.5,20.2,20.0,19.8,19.7,19.6,19.7,19.6,19.5,19.6] },
+      { name:'電子報 點擊率', value:'3.1',  unit:'%', chg:'+0.1% 前期比', up:true,  spark:[2.7,2.8,2.8,2.9,2.9,3.0,3.0,3.1,3.0,3.1,3.0,3.1] },
+    ],
     memberMetrics:[
       { name:'新會員數',        value:'2,086',unit:'', chg:'+7.1%', up:true,  spark:[1700,1780,1840,1880,1920,1960,2000,2030,2050,2070,2080,2086] },
       { name:'會員流失率',      value:'2.2',  unit:'%',chg:'-0.2%', up:true,  spark:[3.1,2.9,2.8,2.7,2.6,2.5,2.4,2.3,2.3,2.2,2.3,2.2] },
@@ -782,6 +800,7 @@ const DATA = {
     subFunnel:[
       { name:'新增訂單數',     value:'892',       chg:'+12.4%',up:true  },
       { name:'總金額',         value:'NT$1.48M',  chg:'+12.1%',up:true  },
+      { name:'訂單平均金額',   value:'NT$1,659',  chg:'-0.3%', up:false },
       { name:'新訂數',         value:'810',       chg:'+7.4%', up:true  },
       { name:'新訂次月續訂率', value:'71.8%',chg:'+0.9%', up:true  },
       { name:'整體續訂率',     value:'83.7%',chg:'+0.4%', up:true  },
@@ -791,6 +810,8 @@ const DATA = {
     purFunnel:[
       { name:'新增訂單數',   value:'356',      chg:'+10.2%',up:true  },
       { name:'總金額',       value:'NT$622K',  chg:'+9.8%', up:true  },
+      { name:'訂單平均金額', value:'NT$1,747', chg:'-0.4%', up:false },
+      { name:'平均訂單商品數', value:'2.3 件', chg:'+0.0%', up:true  },
       { name:'加入購物車率', value:'17.9%',    chg:'+0.8%', up:true  },
       { name:'購物車轉換率', value:'41.9%',chg:'-2.5%', up:false },
       { name:'回購率',       value:'27.8%',chg:'+0.2%', up:true  },
@@ -801,7 +822,7 @@ const DATA = {
   week: {
     arpu:  { value:50.0, chg:'+8.3%', chgUp:true, revenue:'NT$12.4M', users:'248,315', prev:'NT$46.2', spark:[38,40,42,44,41,43,47,46,48,50,49,50] },
     pvuu:  { value:8.4, chg:'+5.2%', chgUp:true,  spark:[6.8,7.1,7.3,7.8,7.5,7.9,8.1,8.0,8.3,8.4,8.2,8.4] },
-    login: { value:64.2, chg:'+2.1%', chgUp:true, spark:[58,60,61,62,61,63,63.5,64,64.1,63.8,64.2,64.2] },
+    login: { value:64.2, chg:'+2.1%', chgUp:true, spark:[58,60,61,62,61,63,63.5,64,64.1,63.8,64.2,64.2], total:'924K', active:'593K' },
     order:      { value:3.8, chg:'-1.4%', chgUp:false, spark:[4.5,4.3,4.1,4.2,3.9,4.0,3.8,3.9,3.7,3.8,3.6,3.8] },
     orderCount: { value:'6,074',    chg:'+11.8%', chgUp:true },
     orderTotal: { value:'NT$12.4M', chg:'+11.2%', chgUp:true },
@@ -833,6 +854,12 @@ const DATA = {
       { name:'會員總PVs 佔比',value:'40.2', unit:'%',  chg:'+1.1% 前期比', up:true,  spark:[36.5,37,37.5,38,38.5,39,39.2,39.5,39.8,40.0,40.1,40.2] },
       { name:'訪客總PVs 佔比',value:'59.8', unit:'%',  chg:'-1.1% 前期比', up:false, spark:[63.5,63,62.5,62,61.5,61,60.8,60.5,60.2,60.0,59.9,59.8] },
     ],
+    edmMetrics:[
+      { name:'EDM 開信率',    value:'25.1', unit:'%', chg:'+0.9% 前期比', up:true,  spark:[21.5,22,22.5,23,23.5,23.8,24.2,24.5,24.7,24.9,25.0,25.1] },
+      { name:'EDM 點擊率',    value:'4.4',  unit:'%', chg:'+0.5% 前期比', up:true,  spark:[3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.3,4.4,4.3,4.4] },
+      { name:'電子報 開信率', value:'19.8', unit:'%', chg:'-0.2% 前期比', up:false, spark:[20.8,20.6,20.4,20.2,20.0,19.9,19.8,19.9,19.8,19.9,19.8,19.8] },
+      { name:'電子報 點擊率', value:'3.2',  unit:'%', chg:'+0.2% 前期比', up:true,  spark:[2.8,2.9,3.0,3.0,3.1,3.1,3.2,3.2,3.1,3.2,3.1,3.2] },
+    ],
     memberMetrics:[
       { name:'新會員數',        value:'12,480',unit:'',chg:'+8.4%',up:true, spark:[9200,9800,10500,10900,11200,11500,11800,12000,12100,12300,12400,12480] },
       { name:'會員流失率',      value:'2.1',   unit:'%',chg:'-0.3%',up:true,spark:[3.2,3.0,2.9,2.8,2.6,2.5,2.4,2.3,2.2,2.1,2.2,2.1] },
@@ -842,6 +869,7 @@ const DATA = {
     subFunnel:[
       { name:'新增訂單數',     value:'4,386',    chg:'+11.8%',up:true },
       { name:'總金額',         value:'NT$8.7M',  chg:'+12.8%',up:true },
+      { name:'訂單平均金額',   value:'NT$1,984', chg:'+0.9%', up:true },
       { name:'新訂數',         value:'4,826',    chg:'+9.2%', up:true },
       { name:'新訂次月續訂率', value:'72.5%', chg:'+1.5%', up:true },
       { name:'整體續訂率',     value:'84.2%', chg:'+0.8%', up:true },
@@ -851,6 +879,8 @@ const DATA = {
     purFunnel:[
       { name:'新增訂單數',   value:'1,688',    chg:'+10.8%',up:true  },
       { name:'總金額',       value:'NT$3.7M',  chg:'+10.4%',up:true  },
+      { name:'訂單平均金額', value:'NT$2,192', chg:'-0.4%', up:false },
+      { name:'平均訂單商品數', value:'2.4 件', chg:'+0.1%', up:true  },
       { name:'加入購物車率', value:'18.3%',    chg:'+1.2%', up:true  },
       { name:'購物車轉換率', value:'42.7%', chg:'-2.1%', up:false },
       { name:'回購率',       value:'28.4%', chg:'+0.5%', up:true  },
@@ -861,7 +891,7 @@ const DATA = {
   month: {
     arpu:  { value:52.6, chg:'+13.8%', chgUp:true, revenue:'NT$49.5M', users:'940,681', prev:'NT$46.2', spark:[38,40,42,43,44,45,46,47,48,50,51,52.6] },
     pvuu:  { value:8.9, chg:'+11.2%', chgUp:true,  spark:[6.2,6.5,6.8,7.1,7.4,7.6,7.9,8.1,8.4,8.6,8.8,8.9] },
-    login: { value:65.8, chg:'+4.4%', chgUp:true, spark:[57,58.5,60,61,62,63,63.5,64,64.8,65.2,65.5,65.8] },
+    login: { value:65.8, chg:'+4.4%', chgUp:true, spark:[57,58.5,60,61,62,63,63.5,64,64.8,65.2,65.5,65.8], total:'940K', active:'619K' },
     order:      { value:4.1, chg:'+2.5%', chgUp:true, spark:[3.5,3.6,3.7,3.8,3.9,4.0,4.0,4.1,4.1,4.2,4.1,4.1] },
     orderCount: { value:'24,628',   chg:'+16.2%', chgUp:true },
     orderTotal: { value:'NT$49.5M', chg:'+15.8%', chgUp:true },
@@ -893,6 +923,12 @@ const DATA = {
       { name:'會員總PVs 佔比',value:'43.8', unit:'%',  chg:'+2.8% 前期比', up:true,  spark:[36,37,38,39,40,40.8,41.5,42.0,42.8,43.2,43.6,43.8] },
       { name:'訪客總PVs 佔比',value:'56.2', unit:'%',  chg:'-2.8% 前期比', up:false, spark:[64,63,62,61,60,59.2,58.5,58.0,57.2,56.8,56.4,56.2] },
     ],
+    edmMetrics:[
+      { name:'EDM 開信率',    value:'26.4', unit:'%', chg:'+2.6% 前期比', up:true,  spark:[20,21,22,22.5,23,23.5,24.5,25,25.5,26,26.2,26.4] },
+      { name:'EDM 點擊率',    value:'4.8',  unit:'%', chg:'+0.9% 前期比', up:true,  spark:[3.2,3.4,3.6,3.8,4.0,4.2,4.4,4.5,4.6,4.7,4.75,4.8] },
+      { name:'電子報 開信率', value:'20.4', unit:'%', chg:'+0.8% 前期比', up:true,  spark:[18.5,18.8,19.0,19.2,19.4,19.6,19.8,20.0,20.1,20.2,20.3,20.4] },
+      { name:'電子報 點擊率', value:'3.5',  unit:'%', chg:'+0.4% 前期比', up:true,  spark:[2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.4,3.5,3.5] },
+    ],
     memberMetrics:[
       { name:'新會員數',        value:'48,420',unit:'',chg:'+14.2%',up:true,spark:[34000,36000,38000,40000,41500,42800,44000,45200,46500,47500,48000,48420] },
       { name:'會員流失率',      value:'1.9',   unit:'%',chg:'-0.5%', up:true,spark:[3.0,2.8,2.6,2.5,2.4,2.3,2.2,2.1,2.0,1.9,2.0,1.9] },
@@ -902,6 +938,7 @@ const DATA = {
     subFunnel:[
       { name:'新增訂單數',     value:'18,276',   chg:'+16.2%',up:true },
       { name:'總金額',         value:'NT$34.2M', chg:'+17.2%',up:true },
+      { name:'訂單平均金額',   value:'NT$1,872', chg:'+0.8%', up:true },
       { name:'新訂數',         value:'19,852',   chg:'+18.4%',up:true },
       { name:'新訂次月續訂率', value:'74.1%',  chg:'+3.1%', up:true },
       { name:'整體續訂率',     value:'85.6%',  chg:'+2.2%', up:true },
@@ -911,6 +948,8 @@ const DATA = {
     purFunnel:[
       { name:'新增訂單數',   value:'6,352',    chg:'+14.8%',up:true },
       { name:'總金額',       value:'NT$15.3M', chg:'+13.2%',up:true },
+      { name:'訂單平均金額', value:'NT$2,409', chg:'+2.1%', up:true },
+      { name:'平均訂單商品數', value:'2.6 件', chg:'+0.3%', up:true },
       { name:'加入購物車率', value:'20.1%',    chg:'+3.0%', up:true },
       { name:'購物車轉換率', value:'45.2%', chg:'+0.4%', up:true },
       { name:'回購率',       value:'31.6%', chg:'+3.7%', up:true },
@@ -1143,9 +1182,13 @@ function render() {
   document.getElementById('loginBadge').className = `badge ${d.login.chgUp ? 'up' : 'down'}`;
   spark(document.getElementById('loginSpark'), d.login.spark, '#3b82f6', 190, 68);
 
+  document.getElementById('loginTotalVal').textContent  = d.login.total;
+  document.getElementById('loginActiveVal').textContent = d.login.active;
+
   document.getElementById('adGrid').innerHTML      = d.adMetrics.map(m => kcard(m,'ta')).join('');
   document.getElementById('memberGrid').innerHTML  = d.memberMetrics.map(m => kcard(m,'ti')).join('');
   document.getElementById('vmRatioGrid').innerHTML = d.vmRatio.map(m => kcard(m,'ti')).join('');
+  document.getElementById('edmGrid').innerHTML     = d.edmMetrics.map(m => kcard(m,'ti')).join('');
 
   /* ── Layer 3 ── */
   counter(document.getElementById('orderVal'), d.order.value, 700, 1);
@@ -1171,6 +1214,7 @@ function render() {
       ...d.adMetrics.map(m    => ({ s:m.spark, c:'#a8a29e' })),
       ...d.memberMetrics.map(m=> ({ s:m.spark, c:'#3b82f6' })),
       ...d.vmRatio.map(m      => ({ s:m.spark, c:'#3b82f6' })),
+      ...d.edmMetrics.map(m   => ({ s:m.spark, c:'#3b82f6' })),
     ];
     document.querySelectorAll('.kcard-spark').forEach((svg, i) => {
       if (all[i]) inlineSpark(svg, all[i].s, all[i].c);
