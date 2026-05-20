@@ -6,3 +6,15 @@
 !dashboard.html
 !media_kpi_full_framework.svg
 !README.md
+!docker-compose.yml
+!.env.example
+
+# 後端目錄（整個資料夾允許）
+!backend/
+!backend/**
+!nginx/
+!nginx/**
+
+# 永遠排除真實 .env（含機敏資訊）
+.env
+backend/.env
