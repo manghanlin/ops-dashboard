@@ -8,39 +8,39 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg-base:        #080d1a;
-      --bg-card:        #0e1525;
-      --bg-card-hover:  #131e35;
-      --bg-sub:         #0b1220;
-      --border:         rgba(255,255,255,0.07);
-      --border-hover:   rgba(255,255,255,0.15);
-      --text-primary:   #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-tertiary:  #475569;
+      --bg-base:        #f1f5f9;
+      --bg-card:        #ffffff;
+      --bg-card-hover:  #f8fafc;
+      --bg-sub:         #f1f5f9;
+      --border:         rgba(0,0,0,0.08);
+      --border-hover:   rgba(0,0,0,0.18);
+      --text-primary:   #0f172a;
+      --text-secondary: #475569;
+      --text-tertiary:  #94a3b8;
 
       /* Platform — Green */
-      --p-color:  #10b981;
-      --p-bg:     rgba(16,185,129,0.08);
-      --p-border: rgba(16,185,129,0.22);
+      --p-color:  #059669;
+      --p-bg:     rgba(5,150,105,0.08);
+      --p-border: rgba(5,150,105,0.25);
 
       /* Identity — Blue */
-      --i-color:  #3b82f6;
-      --i-bg:     rgba(59,130,246,0.08);
-      --i-border: rgba(59,130,246,0.22);
+      --i-color:  #2563eb;
+      --i-bg:     rgba(37,99,235,0.08);
+      --i-border: rgba(37,99,235,0.25);
 
       /* Ad axis — Warm stone */
-      --a-color:  #a8a29e;
-      --a-border: rgba(168,162,158,0.22);
+      --a-color:  #78716c;
+      --a-border: rgba(120,113,108,0.25);
 
       /* Conversion — Orange */
-      --c-color:  #f97316;
-      --c-bg:     rgba(249,115,22,0.08);
-      --c-border: rgba(249,115,22,0.22);
+      --c-color:  #ea580c;
+      --c-bg:     rgba(234,88,12,0.08);
+      --c-border: rgba(234,88,12,0.25);
 
       /* Purchase funnel — Rose */
-      --r-color:  #f43f5e;
-      --r-bg:     rgba(244,63,94,0.08);
-      --r-border: rgba(244,63,94,0.22);
+      --r-color:  #e11d48;
+      --r-bg:     rgba(225,29,72,0.08);
+      --r-border: rgba(225,29,72,0.25);
 
       /* ARPU — Purple/Indigo */
       --arpu-a:   #a855f7;
@@ -69,14 +69,14 @@
     /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
 
     /* ══════════════════════════════════════
        HEADER
     ══════════════════════════════════════ */
     .header {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(8,13,26,0.88);
+      background: rgba(241,245,249,0.92);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border);
@@ -99,7 +99,7 @@
     .header-right { display: flex; align-items: center; gap: 14px; }
     .time-filter {
       display: flex;
-      background: rgba(255,255,255,0.04);
+      background: rgba(0,0,0,0.04);
       border: 1px solid var(--border);
       border-radius: var(--rad-s);
       overflow: hidden;
@@ -112,8 +112,8 @@
       transition: background .18s, color .18s;
       white-space: nowrap;
     }
-    .time-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
-    .time-btn.active { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+    .time-btn:hover { color: var(--text-primary); background: rgba(0,0,0,0.06); }
+    .time-btn.active { background: rgba(0,0,0,0.08); color: var(--text-primary); font-weight: 600; }
     .ts { font-size: 11px; color: var(--text-tertiary); }
 
     /* ══════════════════════════════════════
@@ -129,8 +129,8 @@
        ARPU HERO
     ══════════════════════════════════════ */
     .hero {
-      background: linear-gradient(140deg,#1c0a38 0%,#0d1538 45%,#080f22 100%);
-      border: 1px solid rgba(168,85,247,0.18);
+      background: linear-gradient(140deg,#f5f0ff 0%,#eef2ff 45%,#f8fafc 100%);
+      border: 1px solid rgba(168,85,247,0.22);
       border-radius: var(--rad-xl);
       padding: 32px 40px;
       margin-bottom: 20px;
@@ -185,7 +185,7 @@
     .hero-meta {
       display: flex; gap: 28px; flex-wrap: wrap;
       padding-top: 18px;
-      border-top: 1px solid rgba(255,255,255,.06);
+      border-top: 1px solid rgba(0,0,0,.08);
     }
     .meta-item { display: flex; flex-direction: column; gap: 2px; }
     .meta-label {
@@ -218,7 +218,7 @@
     ══════════════════════════════════════ */
     .layer-nav {
       display: flex; gap: 4px;
-      background: rgba(255,255,255,.03);
+      background: rgba(0,0,0,.03);
       border: 1px solid var(--border);
       border-radius: var(--rad-m);
       padding: 4px;
@@ -235,7 +235,7 @@
       cursor: pointer;
       transition: all .22s ease;
     }
-    .layer-tab:hover { color: var(--text-primary); background: rgba(255,255,255,.04); }
+    .layer-tab:hover { color: var(--text-primary); background: rgba(0,0,0,.04); }
     .tab-dot {
       width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
       transition: box-shadow .22s;
@@ -310,7 +310,7 @@
     .mkpi-secondary {
       display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
       margin-top: 14px; padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,.06);
+      border-top: 1px solid rgba(0,0,0,.08);
     }
     .mkpi-sec-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
     .mkpi-sec-value {
@@ -383,12 +383,12 @@
     }
     .bd-row {
       display:flex; align-items:center; justify-content:space-between;
-      padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+      padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.06);
     }
     .bd-row:last-of-type { border-bottom:none; }
     .bd-row-name  { font-size:12px; color:var(--text-secondary); }
     .bd-row-val   { font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text-primary); }
-    .bd-bar { height:4px; background:rgba(255,255,255,.06); border-radius:2px; margin-top:10px; overflow:hidden; }
+    .bd-bar { height:4px; background:rgba(0,0,0,.08); border-radius:2px; margin-top:10px; overflow:hidden; }
     .bd-fill { height:100%; border-radius:2px; transition:width .6s ease; }
 
     /* Funnel Cards */
@@ -412,12 +412,12 @@
     .fstep {
       display:flex; align-items:center; gap:10px;
       padding: 9px 11px;
-      background: rgba(255,255,255,.02);
+      background: rgba(0,0,0,.025);
       border: 1px solid transparent;
       border-radius: var(--rad-s);
       transition: background .18s, border-color .18s;
     }
-    .fstep:hover { background:rgba(255,255,255,.045); border-color:var(--border); }
+    .fstep:hover { background:rgba(0,0,0,.045); border-color:var(--border); }
     .fstep-num {
       width:20px; height:20px; border-radius:50%;
       display:flex; align-items:center; justify-content:center;
@@ -433,8 +433,8 @@
     .fcard-footer {
       margin: 0 10px 10px;
       padding: 10px 12px;
-      background: rgba(255,255,255,.025);
-      border: 1px dashed rgba(255,255,255,.07);
+      background: rgba(0,0,0,.025);
+      border: 1px dashed rgba(0,0,0,.1);
       border-radius: var(--rad-s);
     }
     .ffoot-title { font-size:10px; color:var(--text-tertiary); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:7px; }
@@ -464,18 +464,18 @@
       font-size: 11px; font-weight: 700;
       text-transform: uppercase; letter-spacing: .07em;
       color: var(--text-tertiary);
-      background: rgba(255,255,255,.02);
+      background: rgba(0,0,0,.025);
       border-bottom: 1px solid var(--border);
       text-align: left;
     }
     .site-table th:not(:first-child) { text-align: right; }
     .site-table td {
       padding: 11px 16px;
-      border-bottom: 1px solid rgba(255,255,255,.04);
+      border-bottom: 1px solid rgba(0,0,0,.05);
       vertical-align: middle;
     }
     .site-table tr:last-child td { border-bottom: none; }
-    .site-table tr:hover td { background: rgba(255,255,255,.025); }
+    .site-table tr:hover td { background: rgba(0,0,0,.025); }
 
     .site-name-cell {
       display: flex; align-items: center; gap: 9px;
@@ -499,6 +499,45 @@
     }
     .site-chg.up   { color: var(--up); }
     .site-chg.down { color: var(--down); }
+
+    /* ══════════════════════════════════════
+       COHORT RETENTION (訂閱漏斗同期留存)
+    ══════════════════════════════════════ */
+    .cohort-wrap {
+      margin: 0 10px 8px;
+      padding: 11px 14px;
+      background: rgba(234,88,12,.05);
+      border: 1px solid rgba(234,88,12,.18);
+      border-radius: var(--rad-s);
+    }
+    .cohort-head {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--c-color);
+      margin-bottom: 9px;
+    }
+    .cohort-row {
+      display: flex; justify-content: space-between; gap: 4px;
+    }
+    .cohort-cell {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 3px; flex: 1;
+      padding: 6px 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .cohort-period {
+      font-size: 10px; color: var(--text-tertiary);
+      font-weight: 700; text-transform: uppercase;
+    }
+    .cohort-val {
+      font-size: 13px; font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--c-color);
+    }
+    /* bar under cohort value */
+    .cohort-bar-wrap { width:100%; height:3px; background:rgba(0,0,0,.07); border-radius:2px; }
+    .cohort-bar { height:100%; border-radius:2px; background:var(--c-color); opacity:.6; }
 
     /* ══════════════════════════════════════
        RESPONSIVE
@@ -741,6 +780,11 @@
 
     <div class="funnel-grid" id="funnelGrid"></div>
 
+    <div class="sec">
+      <div class="sec-title">各品牌轉換率比較</div>
+      <div id="convSiteGrid"></div>
+    </div>
+
   </div>
 
 </main>
@@ -801,12 +845,23 @@ const DATA = {
       { name:'新增訂單數',     value:'892',       chg:'+12.4%',up:true  },
       { name:'總金額',         value:'NT$1.48M',  chg:'+12.1%',up:true  },
       { name:'訂單平均金額',   value:'NT$1,659',  chg:'-0.3%', up:false },
+      { name:'淨成長數',       value:'+342',      chg:'+8.2%', up:true  },
+      { name:'復訂率',         value:'12.4%',     chg:'+0.8%', up:true  },
       { name:'新訂數',         value:'810',       chg:'+7.4%', up:true  },
       { name:'新訂次月續訂率', value:'71.8%',chg:'+0.9%', up:true  },
       { name:'整體續訂率',     value:'83.7%',chg:'+0.4%', up:true  },
       { name:'付費牆轉換率',   value:'6.5%', chg:'+0.1%', up:true  },
     ],
+    subRetention:{ '月1':'89.2%','月2':'76.4%','月3':'68.1%','月6':'54.3%','月12':'38.7%' },
     subFoot:{ LTV:'NT$1,821', MRR:'NT$2.0M', 'LTV:CAC':'3.7×' },
+    convSites:[
+      { label:'BusinessWeekly', color:'#6366f1',
+        sub:{ value:'4.2%',chg:'+0.3%',up:true  }, pur:{ value:'2.1%',chg:'-0.2%',up:false } },
+      { label:'Smart',          color:'#10b981',
+        sub:{ value:'3.8%',chg:'+0.5%',up:true  }, pur:{ value:'1.8%',chg:'+0.1%',up:true  } },
+      { label:'Health',         color:'#f97316',
+        sub:{ value:'2.1%',chg:'-0.1%',up:false }, pur:{ value:'1.2%',chg:'+0.3%',up:true  } },
+    ],
     purFunnel:[
       { name:'新增訂單數',   value:'356',      chg:'+10.2%',up:true  },
       { name:'總金額',       value:'NT$622K',  chg:'+9.8%', up:true  },
@@ -870,12 +925,23 @@ const DATA = {
       { name:'新增訂單數',     value:'4,386',    chg:'+11.8%',up:true },
       { name:'總金額',         value:'NT$8.7M',  chg:'+12.8%',up:true },
       { name:'訂單平均金額',   value:'NT$1,984', chg:'+0.9%', up:true },
+      { name:'淨成長數',       value:'+1,842',   chg:'+9.4%', up:true },
+      { name:'復訂率',         value:'13.1%',    chg:'+1.2%', up:true },
       { name:'新訂數',         value:'4,826',    chg:'+9.2%', up:true },
       { name:'新訂次月續訂率', value:'72.5%', chg:'+1.5%', up:true },
       { name:'整體續訂率',     value:'84.2%', chg:'+0.8%', up:true },
       { name:'付費牆轉換率',   value:'6.8%',  chg:'+0.3%', up:true },
     ],
+    subRetention:{ '月1':'90.1%','月2':'77.8%','月3':'69.4%','月6':'55.8%','月12':'40.2%' },
     subFoot:{ LTV:'NT$1,856', MRR:'NT$2.1M', 'LTV:CAC':'3.8×' },
+    convSites:[
+      { label:'BusinessWeekly', color:'#6366f1',
+        sub:{ value:'4.5%',chg:'+0.6%',up:true  }, pur:{ value:'2.3%',chg:'+0.1%',up:true  } },
+      { label:'Smart',          color:'#10b981',
+        sub:{ value:'4.1%',chg:'+0.8%',up:true  }, pur:{ value:'2.0%',chg:'+0.3%',up:true  } },
+      { label:'Health',         color:'#f97316',
+        sub:{ value:'2.3%',chg:'+0.2%',up:true  }, pur:{ value:'1.4%',chg:'+0.5%',up:true  } },
+    ],
     purFunnel:[
       { name:'新增訂單數',   value:'1,688',    chg:'+10.8%',up:true  },
       { name:'總金額',       value:'NT$3.7M',  chg:'+10.4%',up:true  },
@@ -939,12 +1005,23 @@ const DATA = {
       { name:'新增訂單數',     value:'18,276',   chg:'+16.2%',up:true },
       { name:'總金額',         value:'NT$34.2M', chg:'+17.2%',up:true },
       { name:'訂單平均金額',   value:'NT$1,872', chg:'+0.8%', up:true },
+      { name:'淨成長數',       value:'+7,214',   chg:'+12.1%',up:true },
+      { name:'復訂率',         value:'15.2%',    chg:'+2.4%', up:true },
       { name:'新訂數',         value:'19,852',   chg:'+18.4%',up:true },
       { name:'新訂次月續訂率', value:'74.1%',  chg:'+3.1%', up:true },
       { name:'整體續訂率',     value:'85.6%',  chg:'+2.2%', up:true },
       { name:'付費牆轉換率',   value:'7.4%',   chg:'+1.2%', up:true },
     ],
+    subRetention:{ '月1':'91.4%','月2':'79.2%','月3':'71.6%','月6':'58.4%','月12':'43.1%' },
     subFoot:{ LTV:'NT$1,940', MRR:'NT$2.4M', 'LTV:CAC':'4.1×' },
+    convSites:[
+      { label:'BusinessWeekly', color:'#6366f1',
+        sub:{ value:'5.1%',chg:'+1.2%',up:true  }, pur:{ value:'2.8%',chg:'+0.6%',up:true  } },
+      { label:'Smart',          color:'#10b981',
+        sub:{ value:'4.6%',chg:'+1.4%',up:true  }, pur:{ value:'2.4%',chg:'+0.8%',up:true  } },
+      { label:'Health',         color:'#f97316',
+        sub:{ value:'2.8%',chg:'+0.8%',up:true  }, pur:{ value:'1.8%',chg:'+0.9%',up:true  } },
+    ],
     purFunnel:[
       { name:'新增訂單數',   value:'6,352',    chg:'+14.8%',up:true },
       { name:'總金額',       value:'NT$15.3M', chg:'+13.2%',up:true },
@@ -1089,7 +1166,6 @@ function kcard(d, tint) {
 function fcard(d, isConv) {
   const cls    = isConv ? 'fc' : 'fr';
   const dotClr = isConv ? 'var(--c-color)' : 'var(--r-color)';
-  const sClass = isConv ? 'fc' : 'fr';
   const items  = d.steps.map((s,i) => `
     <div class="fstep">
       <div class="fstep-num">${i+1}</div>
@@ -1099,6 +1175,25 @@ function fcard(d, isConv) {
       </div>
       <span class="fstep-chg" style="color:${s.up?'var(--up)':'var(--down)'}">${s.up?'↑':'↓'} ${s.chg}</span>
     </div>`).join('');
+
+  /* 同期留存（僅訂閱漏斗傳入 cohort 時顯示） */
+  const cohortSection = d.cohort ? (() => {
+    const maxVal = 100;
+    const cells  = Object.entries(d.cohort).map(([k,v]) => {
+      const pct = parseFloat(v);
+      const w   = Math.round(pct / maxVal * 100);
+      return `<div class="cohort-cell">
+        <span class="cohort-period">${k}</span>
+        <span class="cohort-val">${v}</span>
+        <div class="cohort-bar-wrap"><div class="cohort-bar" style="width:${w}%"></div></div>
+      </div>`;
+    }).join('');
+    return `<div class="cohort-wrap">
+      <div class="cohort-head">同期留存率</div>
+      <div class="cohort-row">${cells}</div>
+    </div>`;
+  })() : '';
+
   const footer = Object.entries(d.foot).map(([k,v]) => `
     <div class="ffoot-metric">
       <span class="ffoot-label">${k}</span>
@@ -1110,11 +1205,40 @@ function fcard(d, isConv) {
       <div class="fcard-title">${d.title}</div>
     </div>
     <div class="fcard-body">${items}</div>
+    ${cohortSection}
     <div class="fcard-footer">
       <div class="ffoot-title">延伸指標</div>
       <div class="ffoot-metrics">${footer}</div>
     </div>
   </div>`;
+}
+
+function buildConvSiteTable(sites) {
+  const arrowUp   = `<svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true"><path d="M4.5 7V2M4.5 2L2 4.5M4.5 2L7 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const arrowDown = `<svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true"><path d="M4.5 2V7M4.5 7L2 4.5M4.5 7L7 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  function chgCell(m) {
+    return `<div class="site-metric-cell">
+      <span class="site-val">${m.value}</span>
+      <span class="site-chg ${m.up?'up':'down'}">${m.up?arrowUp:arrowDown} ${m.chg}</span>
+    </div>`;
+  }
+  const rows = sites.map(s => `
+    <tr>
+      <td><div class="site-name-cell">
+        <div class="site-dot" style="background:${s.color}"></div>
+        <span class="site-label">${s.label}</span>
+      </div></td>
+      <td>${chgCell(s.sub)}</td>
+      <td>${chgCell(s.pur)}</td>
+    </tr>`).join('');
+  return `<table class="site-table" aria-label="各品牌轉換率比較">
+    <thead><tr>
+      <th>品牌</th>
+      <th style="text-align:right">訂閱轉換率</th>
+      <th style="text-align:right">購買轉換率</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 
 /* ═══════════════════════════════════════════
@@ -1203,8 +1327,10 @@ function render() {
   spark(document.getElementById('orderSpark'), d.order.spark, '#f97316', 190, 68);
 
   document.getElementById('funnelGrid').innerHTML =
-    fcard({ title:'訂閱漏斗', steps: d.subFunnel, foot: d.subFoot }, true) +
+    fcard({ title:'訂閱漏斗', steps: d.subFunnel, foot: d.subFoot, cohort: d.subRetention }, true) +
     fcard({ title:'購買漏斗', steps: d.purFunnel, foot: d.purFoot }, false);
+
+  document.getElementById('convSiteGrid').innerHTML = buildConvSiteTable(d.convSites);
 
   /* ── Inline sparklines (after DOM update) ── */
   requestAnimationFrame(() => {
