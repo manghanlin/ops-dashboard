@@ -80,8 +80,8 @@
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border);
-      height: 56px;
-      padding: 0 24px;
+      min-height: 56px;
+      padding: 10px 24px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .brand {
@@ -96,25 +96,52 @@
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
 
-    .header-right { display: flex; align-items: center; gap: 14px; }
-    .time-filter {
+    .header-right { display: flex; align-items: flex-end; }
+    .ts { font-size: 11px; color: var(--text-tertiary); white-space: nowrap; }
+
+    /* ── 雙層時間篩選 ── */
+    .tf-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .tf-top  { display: flex; align-items: center; gap: 12px; }
+
+    .tf-groups {
       display: flex;
       background: rgba(0,0,0,0.04);
       border: 1px solid var(--border);
       border-radius: var(--rad-s);
       overflow: hidden;
     }
-    .time-btn {
-      padding: 5px 14px;
+    .tf-group-btn {
+      padding: 5px 16px;
       font-size: 12px; font-weight: 500;
       color: var(--text-secondary);
       background: transparent; border: none; cursor: pointer;
       transition: background .18s, color .18s;
       white-space: nowrap;
     }
-    .time-btn:hover { color: var(--text-primary); background: rgba(0,0,0,0.06); }
-    .time-btn.active { background: rgba(0,0,0,0.08); color: var(--text-primary); font-weight: 600; }
-    .ts { font-size: 11px; color: var(--text-tertiary); }
+    .tf-group-btn:hover { color: var(--text-primary); background: rgba(0,0,0,0.06); }
+    .tf-group-btn.active {
+      background: rgba(0,0,0,0.09); color: var(--text-primary); font-weight: 700;
+    }
+
+    .tf-sub-row {
+      display: flex;
+      background: rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-s);
+      overflow: hidden;
+    }
+    .tf-sub-btn {
+      padding: 3px 9px;
+      font-size: 11px; font-weight: 500;
+      color: var(--text-secondary);
+      background: transparent; border: none; cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s, color .15s;
+    }
+    .tf-sub-btn:hover { background: rgba(0,0,0,0.06); color: var(--text-primary); }
+    .tf-sub-btn.active {
+      background: rgba(0,0,0,0.1); color: var(--text-primary); font-weight: 700;
+    }
 
     /* ══════════════════════════════════════
        LAYOUT
@@ -573,12 +600,17 @@
     營運數據儀表板
   </div>
   <div class="header-right">
-    <div class="time-filter" role="group" aria-label="時間篩選">
-      <button class="time-btn" onclick="setTime(this,'today')" aria-pressed="false">今日</button>
-      <button class="time-btn active" onclick="setTime(this,'week')"  aria-pressed="true">本週</button>
-      <button class="time-btn" onclick="setTime(this,'month')" aria-pressed="false">本月</button>
+    <div class="tf-wrap" aria-label="時間篩選">
+      <div class="tf-top">
+        <span class="ts" id="ts" aria-live="polite"></span>
+        <div class="tf-groups" role="group" aria-label="時間單位">
+          <button class="tf-group-btn" onclick="setGroup(this,'day')"   aria-pressed="false">天</button>
+          <button class="tf-group-btn active" onclick="setGroup(this,'week')"  aria-pressed="true">週</button>
+          <button class="tf-group-btn" onclick="setGroup(this,'month')" aria-pressed="false">月</button>
+        </div>
+      </div>
+      <div class="tf-sub-row" id="tfSubRow" role="group" aria-label="期間選擇"></div>
     </div>
-    <span class="ts" id="ts" aria-live="polite"></span>
   </div>
 </header>
 
@@ -1363,13 +1395,43 @@ function switchTab(l) {
 }
 
 /* ═══════════════════════════════════════════
-   TIME FILTER
+   TIME FILTER — 雙層選擇器
 ═══════════════════════════════════════════ */
-function setTime(btn, p) {
-  period = p;
-  document.querySelectorAll('.time-btn').forEach(b => {
+const TF_OPTIONS = {
+  day:   [['today','今日'],['today','前1天'],['today','前2天'],['today','前3天'],['today','前4天'],['today','前5天'],['today','前6天']],
+  week:  [['week','本週'], ['week','前1週'], ['week','前2週'], ['week','前3週'], ['week','前4週'], ['week','前5週'], ['week','前6週']],
+  month: [['month','本月'],['month','前1月'],['month','前2月'],['month','前3月'],['month','前4月'],['month','前5月'],['month','前6月']],
+};
+let currentGroup = 'week';
+let currentSubIdx = 0;
+
+function setGroup(btn, group) {
+  currentGroup = group;
+  currentSubIdx = 0;
+  document.querySelectorAll('.tf-group-btn').forEach(b => {
     b.classList.toggle('active', b === btn);
     b.setAttribute('aria-pressed', b === btn);
+  });
+  period = TF_OPTIONS[group][0][0];
+  renderSubRow();
+  render();
+}
+
+function renderSubRow() {
+  const opts = TF_OPTIONS[currentGroup];
+  document.getElementById('tfSubRow').innerHTML = opts.map(([p, lbl], i) =>
+    `<button class="tf-sub-btn${i === currentSubIdx ? ' active' : ''}"
+      onclick="setSubPeriod(this,${i},'${p}')"
+      aria-pressed="${i === currentSubIdx}">${lbl}</button>`
+  ).join('');
+}
+
+function setSubPeriod(btn, idx, p) {
+  currentSubIdx = idx;
+  period = p;
+  document.querySelectorAll('.tf-sub-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+    b.setAttribute('aria-pressed', i === idx);
   });
   render();
 }
@@ -1384,6 +1446,7 @@ function tick() {
 
 /* ── INIT ── */
 render();
+renderSubRow();
 tick();
 </script>
 </body>
