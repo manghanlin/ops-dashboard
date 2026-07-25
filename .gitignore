@@ -18,3 +18,8 @@
 # 永遠排除真實 .env（含機敏資訊）
 .env
 backend/.env
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
