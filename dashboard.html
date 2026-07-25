@@ -99,7 +99,7 @@
     .header-right { display: flex; align-items: center; gap: 14px; }
     .ts { font-size: 11px; color: var(--text-tertiary); white-space: nowrap; }
 
-    /* ── Hover 下拉時間篩選 ── */
+    /* ── 點擊下拉時間篩選 ── */
     .tf-wrap { display: flex; gap: 4px; }
 
     .tf-item { position: relative; }
@@ -116,7 +116,7 @@
       white-space: nowrap;
       transition: background .18s, color .18s, border-color .18s;
     }
-    .tf-item:hover .tf-main-btn,
+    .tf-main-btn:hover,
     .tf-main-btn:focus-visible {
       background: rgba(0,0,0,0.07);
       color: var(--text-primary);
@@ -128,7 +128,7 @@
       border-color: var(--border-hover);
     }
     .tf-chevron { transition: transform .18s; flex-shrink:0; }
-    .tf-item:hover .tf-chevron { transform: rotate(180deg); }
+    .tf-item.open .tf-chevron { transform: rotate(180deg); }
 
     .tf-dropdown {
       position: absolute;
@@ -146,7 +146,7 @@
       transition: opacity .15s ease, transform .15s ease, visibility .15s;
       pointer-events: none;
     }
-    .tf-item:hover .tf-dropdown {
+    .tf-item.open .tf-dropdown {
       opacity: 1; visibility: visible;
       transform: translateY(0);
       pointer-events: auto;
@@ -1414,16 +1414,16 @@ function switchTab(l) {
 }
 
 /* ═══════════════════════════════════════════
-   TIME FILTER — Hover 下拉選單
+   TIME FILTER — 點擊下拉選單
 ═══════════════════════════════════════════ */
 const TF_OPTIONS = {
   day:   [['today','今日'],['today','前1天'],['today','前2天'],['today','前3天'],['today','前4天'],['today','前5天'],['today','前6天']],
   week:  [['week','本週'], ['week','前1週'], ['week','前2週'], ['week','前3週'], ['week','前4週'], ['week','前5週'], ['week','前6週']],
   month: [['month','本月'],['month','前1月'],['month','前2月'],['month','前3月'],['month','前4月'],['month','前5月'],['month','前6月']],
 };
-const TF_DEFAULT = { day:'本日', week:'本週', month:'本月' };
 let currentGroup = 'week';
 let currentSubIdx = 0;
+let openGroup = null;
 
 const CHEVRON = `<svg class="tf-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
@@ -1435,14 +1435,16 @@ function buildTimeFilter() {
   ];
   document.getElementById('tfWrap').innerHTML = groups.map(g => {
     const isActive = g.id === currentGroup;
+    const isOpen   = g.id === openGroup;
     const btnLabel = isActive ? TF_OPTIONS[g.id][currentSubIdx][1] : g.label;
     const opts = TF_OPTIONS[g.id].map(([p, lbl], i) => {
       const sep = i === 1 ? '<div class="tf-divider"></div>' : '';
       return `${sep}<button class="tf-opt${isActive && i === currentSubIdx ? ' active' : ''}"
-        onclick="selectPeriod('${g.id}',${i},'${p}','${lbl}')">${lbl}</button>`;
+        onclick="selectPeriod('${g.id}',${i},'${p}')">${lbl}</button>`;
     }).join('');
-    return `<div class="tf-item">
-      <button class="tf-main-btn${isActive ? ' active' : ''}" aria-haspopup="listbox">
+    return `<div class="tf-item${isOpen ? ' open' : ''}" id="tfi-${g.id}">
+      <button class="tf-main-btn${isActive ? ' active' : ''}" aria-haspopup="listbox"
+        aria-expanded="${isOpen}" onclick="toggleDropdown('${g.id}',event)">
         <span>${btnLabel}</span>${CHEVRON}
       </button>
       <div class="tf-dropdown" role="listbox">${opts}</div>
@@ -1450,13 +1452,27 @@ function buildTimeFilter() {
   }).join('');
 }
 
-function selectPeriod(group, idx, p, lbl) {
+function toggleDropdown(groupId, e) {
+  e && e.stopPropagation();
+  openGroup = openGroup === groupId ? null : groupId;
+  buildTimeFilter();
+}
+
+function selectPeriod(group, idx, p) {
   currentGroup = group;
   currentSubIdx = idx;
   period = p;
+  openGroup = null;
   buildTimeFilter();
   render();
 }
+
+document.addEventListener('click', function(e) {
+  if (openGroup && !e.target.closest('#tfWrap')) {
+    openGroup = null;
+    buildTimeFilter();
+  }
+});
 
 /* ═══════════════════════════════════════════
    TIMESTAMP
